@@ -14,6 +14,17 @@ app.use(bodyParser.json())
 app.use('/api', router)
 app.listen(port)
 
+// sample usage of serverless Paths API
+// pathsApi.createGoal('test', {
+//   name: 'test',
+//   description: 'test',
+//   level: 1,
+//   icon: 'test',
+//   dueDate: new Date(),
+// }).then((response) => {console.log(response)})
+//
+// pathsApi.listGoals('test').then((response) => {console.log(response)})
+
 setupTeams()
 
 async function setupTeams() {
