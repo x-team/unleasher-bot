@@ -1,5 +1,6 @@
 import Botkit from 'botkit'
 import { startUnleashConvo } from './bot/conversations/startUnleash'
+import * as pathsApi from './pathsApi'
 
 let bots = []
 
@@ -20,7 +21,22 @@ const resumeAllConnections = (tokens) => {
 }
 
 const startUnleashConversationWithUser = (bot, user) => {
-  bot.startPrivateConversation({user}, (err, convo) => startUnleashConvo(bot, err, convo))
+  pathsApi.listGoals(user.userId).then((goals) => {
+    let goalOptions = [
+      {
+        "text": "Create a new goal",
+        "value": "create_new_goal"
+      }
+    ]
+    goals.forEach((goal) => {
+      goalOptions.push({
+        "text": goal.name,
+        "value": goal.id
+      })
+    })
+
+    bot.startPrivateConversation({user}, (err, convo) => startUnleashConvo(bot, err, convo, goalOptions))
+  })
 }
 
 const hiBack = (bot, user) => {

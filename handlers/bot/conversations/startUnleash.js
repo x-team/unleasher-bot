@@ -1,39 +1,4 @@
-export const startUnleashConvo = (bot, err, convo) => {
-
-  // goals in here @karol
-  // also look into interactiveMessages controller for handling selection request
-  const dropdownOptions = [
-    {
-      "text": "Path 1",
-      "options": [
-        {
-          "text": "Goal 1",
-          "value": "1"
-        },
-        {
-          "text": "Goal 2",
-          "value": "2"
-        },
-        {
-          "text": "Goal 3",
-          "value": "3"
-        },
-      ]
-    },
-    {
-      "text": "Path 2",
-      "options": [
-        {
-          "text": "Goal 1",
-          "value": "4"
-        },
-        {
-          "text": "Goal 2",
-          "value": "5"
-        },
-      ]
-    },
-  ]
+export const startUnleashConvo = (bot, err, convo, dropdownOptions) => {
 
   convo.addMessage({
     "text": "Alright! Lets select goal you'd like to focus on this week:",
@@ -49,7 +14,7 @@ export const startUnleashConvo = (bot, err, convo) => {
             "name": "goals_list",
             "text": "Select goal",
             "type": "select",
-            "option_groups": dropdownOptions,
+            "options": dropdownOptions,
           },
           {
             "name":"no",

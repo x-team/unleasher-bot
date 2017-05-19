@@ -35,4 +35,7 @@ async function setupTeams() {
   botHandler.listener.hears('hi', 'direct_message', (bot, message) => {
     botHandler.hiBack(bot, message.user)
   })
+  botHandler.listener.hears('Hello', 'mention', (bot, message) => {
+    botHandler.hiBack(bot, message.user)
+  })
 }
