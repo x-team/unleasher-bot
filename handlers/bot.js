@@ -1,10 +1,11 @@
 import Botkit from 'botkit'
+import { startUnleashConvo } from './bot/conversations/startUnleash'
 
-const bots = []
+let bots = []
 
 const listener = Botkit.slackbot({
-    debug: true,
-    stats_optout: false
+  debug: true,
+  stats_optout: false
 });
 
 const createNewBotConnection = (token) => {
@@ -18,8 +19,17 @@ const resumeAllConnections = (tokens) => {
   }
 }
 
+const startUnleashConversationWithUser = (bot, user) => {
+  bot.startPrivateConversation({user}, (err, convo) => startUnleashConvo(bot, err, convo))
+}
+
+const hiBack = (bot, user) => {
+  startUnleashConversationWithUser(bot, user)
+}
+
 export {
   listener,
   createNewBotConnection,
   resumeAllConnections,
+  hiBack,
 }

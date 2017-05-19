@@ -32,9 +32,7 @@ async function setupTeams() {
   await storeHandler.setupDevTeam()
   const tokens = await storeHandler.getAllTokens()
   botHandler.resumeAllConnections(tokens)
-  // To-Do: fill in the keywords for the bot to listen to
-  const keywords = [];
-  botHandler.listener.hears(keywords, ['ambient'], (bot, message) => {
-    // start conversation
+  botHandler.listener.hears('hi', 'direct_message', (bot, message) => {
+    botHandler.hiBack(bot, message.user)
   })
 }

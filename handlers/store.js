@@ -13,8 +13,12 @@ const config = {
 }
 
 const init = () => {
-  firebase.initializeApp(config)
-  return firebase.auth().signInAnonymously()
+  try {
+    firebase.initializeApp(config)
+    firebase.auth().signInAnonymously()
+  } catch (e) {
+    console.log('Firebase auth error', e)
+  }
 }
 
 const storeTeamToken = (token) => {
