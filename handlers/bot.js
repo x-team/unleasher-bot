@@ -43,9 +43,14 @@ const hiBack = (bot, user) => {
   startUnleashConversationWithUser(bot, user)
 }
 
+const introduceUnleash = (bot, message) => {
+  bot.startConversation(message, (err, convo) => startIntroductionConvo(bot, err, convo))
+}
+
 export {
   listener,
   createNewBotConnection,
   resumeAllConnections,
   hiBack,
+  introduceUnleash,
 }

@@ -15,16 +15,6 @@ app.use(bodyParser.json())
 app.use('/api', router)
 app.listen(port)
 
-// sample usage of serverless Paths API
-// let goal = pathsApi.createGoal('test', {
-//   name: 'test',
-//   description: 'test',
-//   level: 1,
-//   icon: 'test',
-//   dueDate: new Date(),
-// })
-// let goals = pathsApi.listGoals('test')
-
 setupTeams()
 
 async function setupTeams() {
@@ -32,10 +22,10 @@ async function setupTeams() {
   await storeHandler.setupDevTeam()
   const tokens = await storeHandler.getAllTokens()
   botHandler.resumeAllConnections(tokens)
-  botHandler.listener.hears('hi', 'direct_message', (bot, message) => {
+  botHandler.listener.on('direct_message', (bot, message) => {
     botHandler.hiBack(bot, message.user)
   })
-  botHandler.listener.hears('Hello', 'mention', (bot, message) => {
-    botHandler.hiBack(bot, message.user)
+  botHandler.listener.hears(['hi', 'Hello'], 'mention', (bot, message) => {
+    botHandler.introduceUnleash(bot, message)
   })
 }
