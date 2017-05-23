@@ -23,7 +23,7 @@ async function setupTeams() {
   const tokens = await storeHandler.getAllTokens()
   botHandler.resumeAllConnections(tokens)
   botHandler.listener.on('direct_message', (bot, message) => {
-    botHandler.hiBack(bot, message.user)
+    botHandler.hiBack(bot, message)
   })
   botHandler.listener.hears(['hi', 'Hello'], 'mention', (bot, message) => {
     botHandler.introduceUnleash(bot, message)
