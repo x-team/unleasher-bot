@@ -1,5 +1,5 @@
 import slack from 'slack-node'
-import * as errorUtil from '../util/error'
+import * as errorUtil from '../../util/error'
 
 const exchangeCodeForToken = (code) => {
   return new Promise((resolve, reject) => {

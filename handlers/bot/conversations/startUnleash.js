@@ -1,4 +1,4 @@
-import * as pathsApi from '../../pathsApi'
+import * as pathsApi from '../../api/pathsApi'
 
 export const startIntroductionConvo = (response, convo) => {
   convo.say('Hi! I am Unleasher bot, if you would like to start your unleash journey DM me')
