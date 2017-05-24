@@ -1,6 +1,6 @@
 import Botkit from 'botkit'
 import { startUnleashConvo, startIntroductionConvo } from './bot/conversations/startUnleash'
-import * as pathsApi from './pathsApi'
+import * as pathsApi from './api/pathsApi'
 
 let bots = []
 

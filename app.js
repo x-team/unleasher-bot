@@ -3,7 +3,7 @@ import express from 'express'
 import router from './controllers'
 import * as botHandler from './handlers/bot'
 import * as storeHandler from './handlers/store'
-import * as pathsApi from './handlers/pathsApi'
+import * as pathsApi from './handlers/api/pathsApi'
 
 const port = process.env.PORT || 3000
 
