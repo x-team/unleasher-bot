@@ -1,10 +1,62 @@
-export const startIntroductionConvo = (bot, err, convo) => {
+import * as pathsApi from '../../pathsApi'
+
+export const startIntroductionConvo = (response, convo) => {
   convo.say('Hi! I am Unleasher bot, if you would like to start your unleash journey DM me')
+  convo.next()
 }
 
-export const startUnleashConvo = (bot, err, convo, dropdownOptions) => {
+const askDescription = (response, convo) => {
+  convo.ask('How would you describe the goal in one sentence? Example: Implement a hello world application in React.js', (response, convo) => {
+    convo.say('Nice one!')
+    askName(response, convo)
+    convo.next()
+  })
+}
 
-  convo.addMessage({
+const askName = (response, convo) => {
+  const firstDay = new Date();
+  const nextWeek = new Date(firstDay.getTime() + 7 * 24 * 60 * 60 * 1000);
+  let goal = {
+    description: response.text,
+    dueDate: nextWeek.toISOString().substring(0, 10)
+  }
+  convo.ask('Give it a good name, maybe something like "Reactive Developer"', (response, convo) => {
+    goal.name = response.text
+    pathsApi.createGoal(response.user, goal).then(() => {
+      convo.say('High five! I created the goal for you with a due date for next week')
+      convo.next()
+    })
+  })
+}
+
+const askCreateGoal = (bot, response, convo) => {
+  convo.ask('Hi! I can see that you have no goals yet. Would you like me to create one?', [
+    {
+      pattern: bot.utterances.yes,
+      callback: (response, convo) => {
+        askDescription(response, convo)
+        convo.next()
+      },
+    },
+    {
+      pattern: bot.utterances.no,
+      callback: (response, convo) => {
+        goodbye(response, convo)
+        convo.next()
+      },
+    },
+    {
+      default: true,
+      callback: (response, convo) => {
+        askAgain(response, convo, this)
+        convo.next()
+      },
+    }
+  ])
+}
+
+const askChooseGoal = (bot, response, convo, dropdownOptions) => {
+  convo.ask({
     "text": "Alright! Lets select goal you'd like to focus on this week:",
     "response_type": "in_channel",
     "attachments": [
@@ -29,38 +81,37 @@ export const startUnleashConvo = (bot, err, convo, dropdownOptions) => {
         ]
       }
     ]
-  },'pick_unleash_goal')
+  })
+  convo.next()
+}
 
-  convo.addMessage({
-    text: 'Didn\'t get that ... Let\'s try again',
-    action: 'default',
-  },'bad_response_1')
+const askAgain = (response, convo, callback) => {
+  convo.say('Didn\'t get that ... Let\'s try again')
+  callback(response, convo)
+  convo.next()
+}
 
-  convo.addMessage({
-    text: 'Alright, let\'s try some other time :wave:',
-    action: 'end',
-  },'end_unleash')
+const goodbye = (response, convo) => {
+  convo.say('Alright, let\'s try some other time :wave:')
+  convo.next()
+}
 
-  convo.ask('Hi! Would you like to start unleashing?', [
-    {
-      pattern: bot.utterances.yes,
-      callback: (response, convo) => {
-        convo.gotoThread('pick_unleash_goal')
-      },
-    },
-    {
-      pattern: bot.utterances.no,
-      callback: (response, convo) => {
-        convo.gotoThread('end_unleash')
-      },
-    },
-    {
-      default: true,
-      callback: (response, convo) => {
-        convo.gotoThread('bad_response_1')
-      },
+export const startUnleashConvo = (bot, response, convo) => {
+  pathsApi.listGoals(response.user).then((goals) => {
+    let goalOptions = []
+    goals.forEach((goal) => {
+      goalOptions.push({
+        "text": goal.name,
+        "value": goal.id
+      })
+    })
+
+    if (goalOptions.length) {
+      askChooseGoal(bot, response, convo, goalOptions)
+    } else {
+      askCreateGoal(bot, response, convo)
     }
-  ])
 
-  return convo.activate()
+    convo.next()
+  })
 }
