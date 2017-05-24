@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser'
 import express from 'express'
-import router from './controllers'
+import routerControllers from './controllers'
+import routerViews from './views'
 import * as botHandler from './handlers/bot'
 import * as storeHandler from './handlers/store'
 import * as pathsApi from './handlers/api/pathsApi'
@@ -12,8 +13,11 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-app.use('/api', router)
-app.listen(port)
+app.use('/api', routerControllers)
+app.use('/', routerViews)
+app.listen(port, () => {
+  console.log(`listening at port ${port}`)
+})
 
 setupTeams()
 
