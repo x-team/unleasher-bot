@@ -5,11 +5,12 @@ const formatGoalDueDate = (date) => {
 const goalsToOptions = (goals) => {
     let goalOptions = []
     goals.forEach((goal) => {
-      const data = {
-        text: goal.name,
-        value: goal.id
+      if (!goal.achieved || goal.achieved !== true) {
+        goalOptions.push({
+          text: goal.name,
+          value: goal.id
+        })
       }
-      goalOptions.push(data)
     })
 
     return goalOptions

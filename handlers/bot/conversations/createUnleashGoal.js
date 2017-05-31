@@ -1,6 +1,6 @@
 import * as dateUtil from '../../../util/date'
 import * as formatterUtil from '../../../util/formatter'
-import { createGoal } from '../../../handlers/api/paths'
+import { createGoal, STATUS_IN_PROGRESS } from '../../../handlers/api/paths'
 
 const addMessageAskCreateGoal = (convo, bot) => {
   convo.addQuestion('Hi! I can see that you have no goals yet. Would you like me to create one?' ,
@@ -31,7 +31,11 @@ const addMessageAskName = (convo, response) => {
           const name = convo.extractResponse('name')
           const description = convo.extractResponse('description')
           const dueDate = formatterUtil.formatGoalDueDate(dateUtil.dateNextWeekISO())
-          const goal = { name, description, dueDate }
+          const status = STATUS_IN_PROGRESS
+          const level = 1
+          const icon = 'home'
+          const achieved = false
+          const goal = { name, description, dueDate, status, level, icon, achieved }
           createGoal(message.user, goal)
         },
       }
