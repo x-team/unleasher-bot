@@ -1,13 +1,13 @@
 import Botkit from 'botkit'
-import { startUnleashConvo, startIntroductionConvo } from './bot/conversations/startUnleash'
-import * as pathsApi from './api/pathsApi'
+import { startUnleashConvo } from './bot/conversations/startUnleash'
+import { startIntroductionConvo } from './bot/conversations/introduction'
 
 let bots = []
 
 const listener = Botkit.slackbot({
   debug: true,
   stats_optout: false
-});
+})
 
 const createNewBotConnection = (token) => {
   const bot = listener.spawn({ token: token.token }).startRTM()
@@ -25,7 +25,7 @@ const hiBack = (bot, message) => {
 }
 
 const introduceUnleash = (bot, message) => {
-  bot.startConversation(message, startIntroductionConvo)
+  bot.startConversation(message, (err, convo) => startIntroductionConvo(convo))
 }
 
 export {

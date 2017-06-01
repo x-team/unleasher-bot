@@ -4,7 +4,6 @@ import routerControllers from './controllers'
 import routerViews from './views'
 import * as botHandler from './handlers/bot'
 import * as storeHandler from './handlers/store'
-import * as pathsApi from './handlers/api/pathsApi'
 
 const port = process.env.PORT || 3000
 
