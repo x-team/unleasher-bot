@@ -1,4 +1,6 @@
 import request from 'request-promise'
+import { dateNextWeekISO } from '../../util/date'
+import { formatGoalDueDate } from '../../util/formatter'
 
 const PATH_DEFAULT_ID = 'unleasher-bot-path'
 const STATUS_IN_PROGRESS = 'in-progress'
@@ -51,9 +53,7 @@ const achieveGoal = async function(userId, goal) {
 }
 
 const postponeGoal = async function(userId, goal) {
-  const firstDay = new Date();
-  const nextWeek = new Date(firstDay.getTime() + 7 * 24 * 60 * 60 * 1000)
-  goal.dueDate = nextWeek.toISOString().substring(0, 10)
+  goal.dueDate = formatGoalDueDate(dateNextWeekISO())
 
   return await updateGoal(userId, goal)
 }
