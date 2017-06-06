@@ -22,6 +22,19 @@ const exchangeCodeForToken = (code) => {
   })
 }
 
+const getTeamUsers = (token) => {
+  return new Promise((resolve, reject) => {
+    const slackClient = new slack(token)
+    slackClient.api('users.list', (err, response) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(response.members)
+      }
+    })
+  })
+}
+
 const identifyDevBotData = () => {
   return new Promise((resolve, reject) => {
     const slackClient = new slack(process.env.slack_bot_token)
@@ -38,4 +51,5 @@ const identifyDevBotData = () => {
 export {
   exchangeCodeForToken,
   identifyDevBotData,
+  getTeamUsers,
 }

@@ -1,6 +1,10 @@
 import request from 'request-promise'
+import { dateNextWeekISO } from '../../util/date'
+import { formatGoalDueDate } from '../../util/formatter'
 
-const PATH_DEFAULT_ID = 'unleasher-bot-path';
+const PATH_DEFAULT_ID = 'unleasher-bot-path'
+const STATUS_IN_PROGRESS = 'in-progress'
+const STATUS_ACHIEVED = 'achieved'
 
 const listGoals = (userId) => {
   const options = {
@@ -9,6 +13,56 @@ const listGoals = (userId) => {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
+      json: true,
+  }
+
+  return request(options)
+}
+
+const listUnachievedGoals = async function(userId) {
+  let goals = await listGoals(userId)
+
+  let unachievedGoals = []
+  goals.forEach((goal) => {
+    if (goal.status !== STATUS_ACHIEVED) {
+      unachievedGoals.push(goal)
+    }
+  })
+
+  return unachievedGoals
+}
+
+const getCurrentGoal = async function(userId) {
+  let goals = await listGoals(userId)
+
+  let currentGoal = null
+  goals.forEach((goal) => {
+    if (goal.status === STATUS_IN_PROGRESS) {
+      currentGoal = goal
+    }
+  })
+
+  return currentGoal
+}
+
+const achieveGoal = async function(userId, goal) {
+  goal.achieved = true
+  goal.status = STATUS_ACHIEVED
+
+  return await updateGoal(userId, goal)
+}
+
+const postponeGoal = async function(userId, goal) {
+  goal.dueDate = formatGoalDueDate(dateNextWeekISO())
+
+  return await updateGoal(userId, goal)
+}
+
+const updateGoal = (userId, goal) => {
+  const options = {
+      method: 'PUT',
+      uri: `${process.env.paths_api_url}/${userId}/${PATH_DEFAULT_ID}-${userId}/goals/${goal.id}`,
+      body: goal,
       json: true,
   }
 
@@ -29,5 +83,10 @@ const createGoal = async function(userId, goal) {
 
 export {
   listGoals,
+  listUnachievedGoals,
   createGoal,
+  postponeGoal,
+  achieveGoal,
+  getCurrentGoal,
+  STATUS_IN_PROGRESS,
 }

@@ -4,6 +4,7 @@ import routerControllers from './controllers'
 import routerViews from './views'
 import * as botHandler from './handlers/bot'
 import * as storeHandler from './handlers/store'
+import * as cronUtil from './util/cron'
 
 const port = process.env.PORT || 3000
 
@@ -25,6 +26,8 @@ async function setupTeams() {
   await storeHandler.setupDevTeam()
   const tokens = await storeHandler.getAllTokens()
   botHandler.resumeAllConnections(tokens)
+  cronUtil.startWeeklyStatusUpdateJob()
+
   botHandler.listener.on('direct_message', (bot, message) => {
     botHandler.hiBack(bot, message)
   })

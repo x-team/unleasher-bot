@@ -1,16 +1,21 @@
 import * as dateUtil from '../../../util/date'
 import { goalsToOptions } from '../../../util/formatter'
-import { listGoals } from '../../api/paths'
+import { listUnachievedGoals, getCurrentGoal } from '../../api/paths'
 import {
   addMessageAskCreateGoal,
   addMessageAskName,
   addMessageAskDescription,
   addMessageGoalCreated
 } from './createUnleashGoal'
+import {
+  addMessageAskGoalCompletion,
+  addMessageAskMoreTime,
+} from './weeklyUnleash'
 
 export const startUnleashConvo = async function(bot, response, convo) {
   const userId = response.user
-  const goals = await listGoals(userId)
+  const goals = await listUnachievedGoals(userId)
+  const goal = await getCurrentGoal(userId)
 
   addMessagePresentGoals(convo, response, goals)
   addMessageRepeat(convo)
@@ -19,9 +24,15 @@ export const startUnleashConvo = async function(bot, response, convo) {
   addMessageAskName(convo, response)
   addMessageAskDescription(convo, bot, response)
   addMessageGoalCreated(convo)
+  if (goal) {
+    addMessageAskGoalCompletion(convo, bot, goal)
+    addMessageAskMoreTime(convo, bot, goal)
+  }
   convo.activate()
 
-  if (goals.length) {
+  if (goal) {
+    convo.gotoThread('weeklyUnleash_askGoalCompletion')
+  } else if (goals.length) {
     convo.gotoThread('startUnleash_presentGoals')
   } else {
     convo.gotoThread('createUnleashGoal_askCreateGoal')
