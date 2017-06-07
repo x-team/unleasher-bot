@@ -1,6 +1,6 @@
 import * as dateUtil from '../../../util/date'
 import { goalsToOptions } from '../../../util/formatter'
-import { listUnachievedGoals, getCurrentGoal } from '../../api/paths'
+import { listUnachievedAndIdleGoals, getCurrentGoal } from '../../api/paths'
 import {
   addMessageAskCreateGoal,
   addMessageAskName,
@@ -10,30 +10,33 @@ import {
 import {
   addMessageAskGoalCompletion,
   addMessageAskMoreTime,
+  addMessageAskChooseGoal,
+  addMessageAskMaybeCreateGoal,
 } from './weeklyUnleash'
 
 export const startUnleashConvo = async function(bot, response, convo) {
   const userId = response.user
-  const goals = await listUnachievedGoals(userId)
+  const goals = await listUnachievedAndIdleGoals(userId)
   const goal = await getCurrentGoal(userId)
 
   addMessagePresentGoals(convo, response, goals)
-  addMessageRepeat(convo)
   addMessageBye(convo)
   addMessageAskCreateGoal(convo, bot)
-  addMessageAskName(convo, response)
+  addMessageAskName(convo, response, goal)
   addMessageAskDescription(convo, bot, response)
   addMessageGoalCreated(convo)
+  addMessageAskChooseGoal(convo, bot)
+  addMessageAskMaybeCreateGoal(convo, bot)
   if (goal) {
     addMessageAskGoalCompletion(convo, bot, goal)
-    addMessageAskMoreTime(convo, bot, goal)
+    addMessageAskMoreTime(convo, bot, goal, goals)
   }
   convo.activate()
 
   if (goal) {
     convo.gotoThread('weeklyUnleash_askGoalCompletion')
   } else if (goals.length) {
-    convo.gotoThread('startUnleash_presentGoals')
+    convo.gotoThread('weeklyUnleash_askChooseGoal')
   } else {
     convo.gotoThread('createUnleashGoal_askCreateGoal')
   }
@@ -49,7 +52,7 @@ const addMessagePresentGoals = async function(convo, response, goals) {
           'fallback': 'Select goal',
           'color': '#3AA3E3',
           'attachment_type': 'default',
-          'callback_id': 'id',
+          'callback_id': 'select_existing_goal',
           'actions': [
             {
               'name': 'goals_list',
@@ -68,15 +71,6 @@ const addMessagePresentGoals = async function(convo, response, goals) {
       ]
     },
     'startUnleash_presentGoals'
-  )
-}
-
-const addMessageRepeat = (convo) => {
-  convo.addMessage({
-      text: 'Didn\'t get that ... Let\'s try again',
-      action: 'default'
-    },
-    'repeat'
   )
 }
 

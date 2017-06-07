@@ -28,7 +28,7 @@ export const addMessageAskGoalCompletion = (convo, bot, goal) => {
   'weeklyUnleash_askGoalCompletion')
 }
 
-export const addMessageAskMoreTime = (convo, bot, goal) => {
+export const addMessageAskMoreTime = (convo, bot, goal, goals) => {
   convo.addQuestion(`Do you need more time for the goal?`, [
     {
       pattern: bot.utterances.yes,
@@ -42,7 +42,11 @@ export const addMessageAskMoreTime = (convo, bot, goal) => {
     {
       pattern: bot.utterances.no,
       callback: (message, response) => {
-        convo.gotoThread('bye')
+        if (goals.length) {
+          convo.gotoThread('weeklyUnleash_askChooseGoal')
+        } else {
+          convo.gotoThread('weeklyUnleash_askMaybeCreateGoal')
+        }
       },
     },
     {
@@ -53,4 +57,44 @@ export const addMessageAskMoreTime = (convo, bot, goal) => {
     }
   ], {},
   'weeklyUnleash_askMoreTime')
+}
+
+export const addMessageAskChooseGoal = (convo, bot) => {
+  convo.addQuestion(`You have some unachieved goals - would you like to choose an existing one for next week?`, [
+    {
+      pattern: bot.utterances.yes,
+      callback: (message, response) => { convo.gotoThread('startUnleash_presentGoals') },
+    },
+    {
+      pattern: bot.utterances.no,
+      callback: (message, response) => { convo.gotoThread('weeklyUnleash_askMaybeCreateGoal') },
+    },
+    {
+      default: true,
+      callback: (message, response) => {
+        convo.repeat()
+      },
+    }
+  ], {},
+  'weeklyUnleash_askChooseGoal')
+}
+
+export const addMessageAskMaybeCreateGoal = (convo, bot) => {
+  convo.addQuestion(`Maybe you would like to create a new goal?`, [
+    {
+      pattern: bot.utterances.yes,
+      callback: (message, response) => { convo.gotoThread('createUnleashGoal_askDescription') },
+    },
+    {
+      pattern: bot.utterances.no,
+      callback: (message, response) => { convo.gotoThread('bye') },
+    },
+    {
+      default: true,
+      callback: (message, response) => {
+        convo.repeat()
+      },
+    }
+  ], {},
+  'weeklyUnleash_askMaybeCreateGoal')
 }

@@ -5,6 +5,7 @@ import { formatGoalDueDate } from '../../util/formatter'
 const PATH_DEFAULT_ID = 'unleasher-bot-path'
 const STATUS_IN_PROGRESS = 'in-progress'
 const STATUS_ACHIEVED = 'achieved'
+const STATUS_SKIPPED = 'skipped'
 
 const listGoals = (userId) => {
   const options = {
@@ -19,17 +20,30 @@ const listGoals = (userId) => {
   return request(options)
 }
 
-const listUnachievedGoals = async function(userId) {
+const listUnachievedAndIdleGoals = async function(userId) {
   let goals = await listGoals(userId)
 
   let unachievedGoals = []
   goals.forEach((goal) => {
-    if (goal.status !== STATUS_ACHIEVED) {
+    if (goal.status !== STATUS_ACHIEVED && goal.status !== STATUS_IN_PROGRESS) {
       unachievedGoals.push(goal)
     }
   })
 
   return unachievedGoals
+}
+
+const getGoalById = async function(userId, goalId) {
+  let goals = await listGoals(userId)
+
+  let searchedGoal = null
+  goals.forEach((goal) => {
+    if (goal.id === goalId) {
+      searchedGoal = goal
+    }
+  })
+
+  return searchedGoal
 }
 
 const getCurrentGoal = async function(userId) {
@@ -54,6 +68,7 @@ const achieveGoal = async function(userId, goal) {
 
 const postponeGoal = async function(userId, goal) {
   goal.dueDate = formatGoalDueDate(dateNextWeekISO())
+  goal.status = STATUS_IN_PROGRESS
 
   return await updateGoal(userId, goal)
 }
@@ -69,7 +84,24 @@ const updateGoal = (userId, goal) => {
   return request(options)
 }
 
+const switchGoal = async function(userId, goalId) {
+  let oldGoal = await getCurrentGoal(userId)
+  let newGoal = await getGoalById(userId, goalId)
+
+  skipGoal(oldGoal)
+  postponeGoal(newGoal)
+}
+
+const skipGoal = async function(userId, goal) {
+  goal.dueDate = null;
+  goal.status = STATUS_SKIPPED
+
+  return await updateGoal(userId, goal)
+}
+
 const createGoal = async function(userId, goal) {
+  goal.status = STATUS_IN_PROGRESS
+
   const options = {
       method: 'POST',
       uri: `${process.env.paths_api_url}/${userId}/${PATH_DEFAULT_ID}-${userId}/goals`,
@@ -83,10 +115,12 @@ const createGoal = async function(userId, goal) {
 
 export {
   listGoals,
-  listUnachievedGoals,
+  listUnachievedAndIdleGoals,
   createGoal,
   postponeGoal,
   achieveGoal,
+  skipGoal,
+  switchGoal,
   getCurrentGoal,
   STATUS_IN_PROGRESS,
 }
