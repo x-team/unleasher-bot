@@ -1,23 +1,19 @@
 import Botkit from 'botkit'
-import { startUnleashConvo } from './bot/conversations/startUnleash'
-import { startIntroductionConvo } from './bot/conversations/introduction'
-import { startWeeklyConvo } from './bot/conversations/weeklyUnleash'
-import { getCurrentGoal } from './api/paths'
 import { getTeamUsers } from './api/slack'
-import { isUserInWhitelist } from './store'
+import { addCommentToCard } from './trello'
 
 let bots = []
 let users = []
 
 const listener = Botkit.slackbot({
-  debug: true,
+  debug: false,
   stats_optout: false
 })
 
-const createNewBotConnection = (token) => {
+const createNewBotConnection = async (token) => {
   const bot = listener.spawn({ token: token.token }).startRTM()
   bots[token.team] = bot
-  users[token.team] = getTeamUsers(token.token)
+  users[token.team] = await getTeamUsers(token.token)
 }
 
 const resumeAllConnections = (tokens) => {
@@ -26,32 +22,36 @@ const resumeAllConnections = (tokens) => {
   }
 }
 
-const hiBack = (bot, message) => {
-  bot.startPrivateConversation(message, (err, convo) => startUnleashConvo(bot, message, convo))
-}
-
-const introduceUnleash = (bot, message) => {
-  bot.startConversation(message, (err, convo) => startIntroductionConvo(convo))
-}
-
-const weeklyStatusUpdate = () => {
-  for ( const team in bots ) {
-    users[team].then((teamUsers) => {
-      teamUsers.forEach((user) => {
-        if (isUserInWhitelist(user.name)) {
-          let message = {user: user.id}
-          bots[team].startPrivateConversation(message, (err, convo) => startUnleashConvo(bots[team], message, convo))
+const passReplyFromTrello = (team, userId, cardId, comment) => {
+  bots[team].startPrivateConversation({user: userId}, (err, convo) => {
+    convo.ask(comment, [
+      {
+        default: true,
+        callback: (response, convo) => {
+          addCommentToCard(cardId, response.text)
         }
-      })
-    })
+      }
+    ]);
+    convo.activate()
+  })
+}
+
+const getUserName = (teamId, userId) => {
+  const teamUsers = users[teamId]
+  let username = userId
+  for (const key in teamUsers) {
+      if (teamUsers[key].id === userId) {
+        username = teamUsers[key].real_name
+      }
   }
+
+  return username
 }
 
 export {
   listener,
   createNewBotConnection,
   resumeAllConnections,
-  hiBack,
-  introduceUnleash,
-  weeklyStatusUpdate
+  getUserName,
+  passReplyFromTrello,
 }

@@ -51,14 +51,9 @@ const getAllTokens = () => {
   })
 }
 
-const isUserInWhitelist = (userName) => {
-  return userName === 'karolsojko'
-}
-
 export {
   storeTeamToken,
   setupDevTeam,
   getAllTokens,
-  isUserInWhitelist,
   init,
 }
