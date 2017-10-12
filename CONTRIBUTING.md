@@ -1,6 +1,8 @@
 <h1 align="center">:heart: THANK YOU :heart:</h1>
 <p align="center"> We greatly appreciate your contributions!<br> Thanks for even consider doing some good in here. </p>
 
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+
 ## How do I contribute ?
 * there is a list of issues in [Issues](https://github.com/jacekelgda/unleasher-bot/issues) section. You can start in there be resolving some of them
 * if you want to propose a new feature you came up with for Unleasher Bot, please create new issue with label `idea`
