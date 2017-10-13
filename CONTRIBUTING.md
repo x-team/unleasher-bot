@@ -59,6 +59,12 @@ Create development Slack application
 
 ![Scopes](https://user-images.githubusercontent.com/1003372/31497318-0a819956-af5f-11e7-9feb-bc238f8542b3.png)
 
+## Paths-API
+
+You need to setup Paths-API project to get full functionality of Unleasher Bot.
+
+Take a look at: https://github.com/x-team/paths-api 
+
 ## Heroku
 
 I do recommend using Heroku for local and server side development.<br>It is very easy to deploy and setup on both environments and it's free.<br>It provides https endpoints by default as well.

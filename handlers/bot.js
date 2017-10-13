@@ -10,7 +10,7 @@ let bots = []
 let users = []
 
 const listener = Botkit.slackbot({
-  debug: true,
+  debug: false,
   stats_optout: false
 })
 
