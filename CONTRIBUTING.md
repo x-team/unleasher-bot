@@ -63,7 +63,7 @@ Create development Slack application
 
 You need to setup Paths-API project to get full functionality of Unleasher Bot.
 
-Take a look at: https://github.com/x-team/paths-api 
+Take a look at: https://github.com/x-team/paths-api for setup details
 
 ## Heroku
 
