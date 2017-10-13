@@ -1,4 +1,5 @@
 import request from 'request-promise'
+import errors from 'request-promise/errors'
 import { dateNextWeekISO } from '../../util/date'
 import { formatGoalDueDate } from '../../util/formatter'
 
@@ -17,12 +18,15 @@ const listGoals = (userId) => {
       json: true,
   }
 
-  return request(options)
+  const result = request(options).catch(errors.StatusCodeError, (reason) => {
+    return []
+  })
+
+  return result
 }
 
 const listUnachievedAndIdleGoals = async function(userId) {
   let goals = await listGoals(userId)
-
   let unachievedGoals = []
   goals.forEach((goal) => {
     if (goal.status !== STATUS_ACHIEVED && goal.status !== STATUS_IN_PROGRESS) {
@@ -101,7 +105,6 @@ const skipGoal = async function(userId, goal) {
 
 const createGoal = async function(userId, goal) {
   goal.status = STATUS_IN_PROGRESS
-
   const options = {
       method: 'POST',
       uri: `${process.env.paths_api_url}/${userId}/${PATH_DEFAULT_ID}-${userId}/goals`,

@@ -1,6 +1,8 @@
 <h1 align="center">:heart: THANK YOU :heart:</h1>
 <p align="center"> We greatly appreciate your contributions!<br> Thanks for even consider doing some good in here. </p>
 
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+
 ## How do I contribute ?
 * there is a list of issues in [Issues](https://github.com/jacekelgda/unleasher-bot/issues) section. You can start in there be resolving some of them
 * if you want to propose a new feature you came up with for Unleasher Bot, please create new issue with label `idea`
@@ -56,6 +58,12 @@ Create development Slack application
 ![Basic information](https://user-images.githubusercontent.com/1003372/31438359-2ab5f0c8-ae88-11e7-956a-eb7f77761bc2.png)
 
 ![Scopes](https://user-images.githubusercontent.com/1003372/31497318-0a819956-af5f-11e7-9feb-bc238f8542b3.png)
+
+## Paths-API
+
+You need to setup Paths-API project to get full functionality of Unleasher Bot.
+
+Take a look at: https://github.com/x-team/paths-api 
 
 ## Heroku
 
