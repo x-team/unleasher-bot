@@ -6,7 +6,7 @@ Unleasher Bot is a Slack app which acts as a Bot. Bot tries to do the best job t
 ## UNLEASH
 ![](https://user-images.githubusercontent.com/1003372/31549416-6a42c6c4-b02e-11e7-9612-8f9961d96235.gif)
 
-[WATCH THIS](https://www.youtube.com/watch?v=0wYdi88LaVg&) first to know what ***#UNLEASH*** is
+[WATCH THIS](https://www.youtube.com/watch?v=0wYdi88LaVg&) first to learn about ***#UNLEASH***
 
 ## Basic functionality
 
