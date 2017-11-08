@@ -24,14 +24,21 @@ const resumeAllConnections = (tokens) => {
     }
 }
 
+const getBotData = (teamId) => {
+    return bots[teamId]
+}
+
+// When someone DM Unleasher Bot
 const hiBack = (bot, message) => {
     bot.startPrivateConversation(message, (err, convo) => startUnleashConvo(bot, message, convo))
 }
 
+// When someone mentiones Unleasher Bot
 const introduceUnleash = (bot, message) => {
     bot.startConversation(message, (err, convo) => startIntroductionConvo(convo))
 }
 
+// Weekly status update for all unleashees
 const weeklyStatusUpdate = () => {
     for ( const team in bots ) {
         users[team].then((teamUsers) => {
@@ -51,5 +58,6 @@ export {
     resumeAllConnections,
     hiBack,
     introduceUnleash,
-    weeklyStatusUpdate
+    weeklyStatusUpdate,
+    getBotData
 }

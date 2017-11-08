@@ -111,7 +111,10 @@ const createGoal = async function(userId, goal) {
       body: goal,
       json: true,
   }
-  let createdGoal = await request(options)
+  let createdGoal = await request(options).catch(error => {
+    console.log('Create goal exception: ', error)
+  })
+  console.log('Created goal response: ', createdGoal)
 
   return createdGoal
 }

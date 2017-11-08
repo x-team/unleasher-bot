@@ -1,12 +1,7 @@
 import * as dateUtil from '../../../util/date'
 import { goalsToOptions } from '../../../util/formatter'
 import { listUnachievedAndIdleGoals, getCurrentGoal } from '../../api/paths'
-import {
-  addMessageAskCreateGoal,
-  addMessageAskName,
-  addMessageAskDescription,
-  addMessageGoalCreated
-} from './createUnleashGoal'
+import { addMessageAskCreateGoal, addMessageCreateGoalByCommand } from './createUnleashGoal'
 import {
   addMessageAskGoalCompletion,
   addMessageAskMoreTime,
@@ -21,16 +16,16 @@ export const startUnleashConvo = async function(bot, response, convo) {
 
   addMessagePresentGoals(convo, response, goals)
   addMessageBye(convo)
-  addMessageAskCreateGoal(convo, bot)
-  addMessageAskName(convo, response, goal)
-  addMessageAskDescription(convo, bot, response)
-  addMessageGoalCreated(convo)
+  addMessageAskCreateGoal(convo)
+  addMessageCreateGoalByCommand(convo)
   addMessageAskChooseGoal(convo, bot)
   addMessageAskMaybeCreateGoal(convo, bot)
+
   if (goal) {
     addMessageAskGoalCompletion(convo, bot, goal)
     addMessageAskMoreTime(convo, bot, goal, goals)
   }
+
   convo.activate()
 
   if (goal) {
