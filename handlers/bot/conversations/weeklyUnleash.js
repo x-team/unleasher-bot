@@ -2,7 +2,7 @@ import { achieveGoal, listGoals, postponeGoal } from '../../api/paths'
 import { startUnleashConvo } from './startUnleash'
 
 export const addMessageAskGoalCompletion = (convo, bot, goal) => {
-  convo.addQuestion(`Hi! Last time we spoke you were in progress on the following goal: "${goal.description}". Have you completed it?`, [
+  convo.addQuestion(`Hi! Last time we spoke you were in progress on the following goal: "${goal.name}". Have you completed it?`, [
     {
       pattern: bot.utterances.yes,
       callback: (message, response) => {

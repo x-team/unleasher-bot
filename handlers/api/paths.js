@@ -52,7 +52,6 @@ const getGoalById = async function(userId, goalId) {
 
 const getCurrentGoal = async function(userId) {
   let goals = await listGoals(userId)
-
   let currentGoal = null
   goals.forEach((goal) => {
     if (goal.status === STATUS_IN_PROGRESS) {
@@ -89,11 +88,16 @@ const updateGoal = (userId, goal) => {
 }
 
 const switchGoal = async function(userId, goalId) {
-  let oldGoal = await getCurrentGoal(userId)
-  let newGoal = await getGoalById(userId, goalId)
-
-  skipGoal(oldGoal)
-  postponeGoal(newGoal)
+  try {
+    const oldGoal = await getCurrentGoal(userId)
+    const newGoal = await getGoalById(userId, goalId)
+    const goalSkipped = await skipGoal(userId, oldGoal)
+    const goalPostponed = await postponeGoal(userId, newGoal)
+  } catch (e) {
+    return false
+  } finally {
+    return true
+  }
 }
 
 const skipGoal = async function(userId, goal) {
@@ -104,7 +108,6 @@ const skipGoal = async function(userId, goal) {
 }
 
 const createGoal = async function(userId, goal) {
-  goal.status = STATUS_IN_PROGRESS
   const options = {
       method: 'POST',
       uri: `${process.env.paths_api_url}/${userId}/${PATH_DEFAULT_ID}-${userId}/goals`,
@@ -114,7 +117,6 @@ const createGoal = async function(userId, goal) {
   let createdGoal = await request(options).catch(error => {
     console.log('Create goal exception: ', error)
   })
-  console.log('Created goal response: ', createdGoal)
 
   return createdGoal
 }

@@ -47,7 +47,7 @@ const addMessagePresentGoals = async function(convo, response, goals) {
           'fallback': 'Select goal',
           'color': '#3AA3E3',
           'attachment_type': 'default',
-          'callback_id': 'select_existing_goal',
+          'callback_id': 'select_current_goal',
           'actions': [
             {
               'name': 'goals_list',
