@@ -1,63 +1,65 @@
-import { achieveGoal, listGoals, postponeGoal } from '../../api/paths'
+import { listGoals, postponeGoal } from '../../api/paths'
 import { startUnleashConvo } from './startUnleash'
 import { goalsToOptions } from '../../../util/formatter'
 
-export const addMessageAskGoalCompletion = (convo, bot, goal) => {
-  convo.addQuestion(`Hi! Last time we spoke you were in progress on the following goal: \`${goal.name}\`. Have you completed it?`, [
-    {
-      pattern: bot.utterances.yes,
-      callback: (message, response) => {
-        achieveGoal(message.user, goal).then((goal) => {
-          convo.say('Awesome :highfive:!')
-          startUnleashConvo(bot, response, convo)
-        })
-      },
-    },
-    {
-      pattern: bot.utterances.no,
-      callback: (message, response) => {
-        convo.gotoThread('weeklyUnleash_askMoreTime')
-      },
-    },
-    {
-      default: true,
-      callback: (message, response) => {
-        convo.repeat()
-      },
-    }
-  ], {},
-  'weeklyUnleash_askGoalCompletion')
-}
-
-export const addMessageAskMoreTime = (convo, bot, goal, goals) => {
-  convo.addQuestion(`Do you need more time for the goal?`, [
-    {
-      pattern: bot.utterances.yes,
-      callback: (message, response) => {
-        postponeGoal(message.user, goal).then((goal) => {
-          convo.say('I updated the due date for the goal to next week')
-          convo.gotoThread('bye')
-        })
-      },
-    },
-    {
-      pattern: bot.utterances.no,
-      callback: (message, response) => {
-        if (goals.length) {
-          convo.gotoThread('weeklyUnleash_askChooseGoal')
-        } else {
-          convo.gotoThread('weeklyUnleash_askMaybeCreateGoal')
+export const addMessageAskGoalCompletion = (convo, bot, goal, goals) => {
+  const dropdownOptions = goalsToOptions(goals)
+  convo.addMessage({
+      "attachments": [
+        {
+          "pretext": "Hi! What is your progress on JavaScript Master lvl.3 goal ?",
+          "fallback": "Unleash status update",
+          "color": "#3AA3E3",
+          "attachment_type": "default",
+          "callback_id": "unleash_status_update",
+          "fields": [
+            {
+              "title": "Name",
+              "value": goal.name,
+              "short": true
+            },
+            {
+              "title": "Status",
+              "value": goal.status,
+              "short": true
+            },
+            {
+              "title": "Description",
+              "value": goal.description,
+              "short": true
+            },
+            {
+              "title": "Level",
+              "value": goal.level,
+              "short": true
+            }
+           ],
+          "actions": [
+            {
+              "name": "goal_done",
+              "text": "Completed",
+              "style": "primary",
+              "value": 1,
+              "type": "button"
+            },
+            {
+              "name": "need_more_time",
+              "text": "I need more time",
+              "value": 0,
+              "type": "button"
+            },
+            {
+              'name': 'goals_list',
+              'text': 'Switch goal here',
+              'type': 'select',
+              'options': dropdownOptions,
+            }
+          ]
         }
-      },
+      ]
     },
-    {
-      default: true,
-      callback: (message, response) => {
-        convo.repeat()
-      },
-    }
-  ], {},
-  'weeklyUnleash_askMoreTime')
+    'weeklyUnleash_askGoalCompletion'
+  )
 }
 
 export const addMessageAskChooseGoal = (convo, bot, goals) => {
