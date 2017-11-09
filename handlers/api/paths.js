@@ -69,11 +69,21 @@ const achieveGoal = async function(userId, goal) {
   return await updateGoal(userId, goal)
 }
 
+const achieveCurrentGoal = async (userId) => {
+  const currentGoal = await getCurrentGoal(userId)
+  return achieveGoal(userId, currentGoal)
+}
+
 const postponeGoal = async function(userId, goal) {
   goal.dueDate = formatGoalDueDate(dateNextWeekISO())
   goal.status = STATUS_IN_PROGRESS
 
   return await updateGoal(userId, goal)
+}
+
+const postponeCurrentGoal = async (userId) => {
+  const currentGoal = await getCurrentGoal(userId)
+  postponeGoal(userId, currentGoal)
 }
 
 const updateGoal = (userId, goal) => {
@@ -87,16 +97,17 @@ const updateGoal = (userId, goal) => {
   return request(options)
 }
 
-const switchGoal = async function(userId, goalId) {
+const switchGoal = async (userId, goalId) => {
   try {
     const oldGoal = await getCurrentGoal(userId)
+    if (oldGoal) {
+        const goalSkipped = await skipGoal(userId, oldGoal)
+    }
     const newGoal = await getGoalById(userId, goalId)
-    const goalSkipped = await skipGoal(userId, oldGoal)
-    const goalPostponed = await postponeGoal(userId, newGoal)
+    return await postponeGoal(userId, newGoal)
   } catch (e) {
+    console.log('switch goal exception: ', e)
     return false
-  } finally {
-    return true
   }
 }
 
@@ -127,6 +138,8 @@ export {
   createGoal,
   postponeGoal,
   achieveGoal,
+  postponeCurrentGoal,
+  achieveCurrentGoal,
   skipGoal,
   switchGoal,
   getCurrentGoal,

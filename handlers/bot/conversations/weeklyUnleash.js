@@ -4,10 +4,13 @@ import { goalsToOptions } from '../../../util/formatter'
 
 export const addMessageAskGoalCompletion = (convo, bot, goal, goals) => {
   const dropdownOptions = goalsToOptions(goals)
+  // here we could check if the due date is still in the future. If so maybe button "I need more time" should just reasure that there is still time left.
+  // or maybe we should change the flow on "I need more time" and in any case it's used it should as for "How much more time do you need ? "
+  console.log('weeklyUnleash_askGoalCompletion', goal)
   convo.addMessage({
       "attachments": [
         {
-          "pretext": "Hi! What is your progress on JavaScript Master lvl.3 goal ?",
+          "pretext": `Hi! What is your progress on ${goal.name} lvl.${goal.level} goal ?`,
           "fallback": "Unleash status update",
           "color": "#3AA3E3",
           "attachment_type": "default",
@@ -31,6 +34,16 @@ export const addMessageAskGoalCompletion = (convo, bot, goal, goals) => {
             {
               "title": "Level",
               "value": goal.level,
+              "short": true
+            },
+            {
+              "title": "Due date",
+              "value": goal.dueDate,
+              "short": true
+            },
+            {
+              "title": "Achieved",
+              "value": goal.achieved ? 'Yes' : 'No',
               "short": true
             }
            ],
@@ -65,7 +78,7 @@ export const addMessageAskGoalCompletion = (convo, bot, goal, goals) => {
 export const addMessageAskChooseGoal = (convo, bot, goals) => {
   const dropdownOptions = goalsToOptions(goals)
   convo.addMessage({
-      text: 'You have some unachieved goals, you can choose one of them or create a new one.',
+      text: 'You have no goal in progress right now. You can choose to work on one of the existing goals or create a new one.',
       response_type: 'in_channel',
       attachments: [
         {
