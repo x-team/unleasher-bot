@@ -9,7 +9,7 @@ import {
   addMessageAskMaybeCreateGoal,
 } from './weeklyUnleash'
 
-export const startUnleashConvo = async function(bot, response, convo) {
+export const startUnleashConvo = async (bot, response, convo) => {
   const userId = response.user
   const goals = await listUnachievedAndIdleGoals(userId)
   const goal = await getCurrentGoal(userId)
@@ -18,7 +18,7 @@ export const startUnleashConvo = async function(bot, response, convo) {
   addMessageBye(convo)
   addMessageAskCreateGoal(convo)
   addMessageCreateGoalByCommand(convo)
-  addMessageAskChooseGoal(convo, bot)
+  addMessageAskChooseGoal(convo, bot, goals)
   addMessageAskMaybeCreateGoal(convo, bot)
 
   if (goal) {
@@ -37,7 +37,7 @@ export const startUnleashConvo = async function(bot, response, convo) {
   }
 }
 
-const addMessagePresentGoals = async function(convo, response, goals) {
+const addMessagePresentGoals = (convo, response, goals) => {
   const dropdownOptions = goalsToOptions(goals)
   convo.addMessage({
       text: 'Alright! Lets select goal you\'d like to focus on this week:',
@@ -58,7 +58,7 @@ const addMessagePresentGoals = async function(convo, response, goals) {
             {
               'name': 'no',
               'text': 'Not today ...',
-              'value': 1,
+              'value': 0,
               'type': 'button',
             }
           ]
