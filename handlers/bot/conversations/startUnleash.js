@@ -22,8 +22,7 @@ export const startUnleashConvo = async (bot, response, convo) => {
   addMessageAskMaybeCreateGoal(convo, bot)
 
   if (goal) {
-    addMessageAskGoalCompletion(convo, bot, goal)
-    addMessageAskMoreTime(convo, bot, goal, goals)
+    addMessageAskGoalCompletion(convo, bot, goal, goals)
   }
 
   convo.activate()
