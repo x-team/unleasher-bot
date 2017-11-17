@@ -84,8 +84,7 @@ router.post('/im', async function (req, res) {
                 }
             ]
             sendChatMessage(payload.user.id, payload.team.id, null, JSON.stringify(attachments))
-            // there should be followup in here. Should this new created goal be marked in progress ?
-            // also some confirmation would be nice in here - that would have to be a separate channel message
+            // there should be followup in here. Should this new created goal be marked in progress?
         } else if ( payload.type === IM_TYPE_INTERACTIVE_MSG && payload.callback_id === IM_MSG_TYPE_CURRENT_GOAL) {
             const goal = await handleSwitchGoal(payload)
             console.log(IM_MSG_TYPE_CURRENT_GOAL, goal)
