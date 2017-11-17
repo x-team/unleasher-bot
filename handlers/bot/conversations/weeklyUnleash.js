@@ -1,8 +1,9 @@
 import { achieveGoal, listGoals, postponeGoal } from '../../api/paths'
 import { startUnleashConvo } from './startUnleash'
+import { goalsToOptions } from '../../../util/formatter'
 
 export const addMessageAskGoalCompletion = (convo, bot, goal) => {
-  convo.addQuestion(`Hi! Last time we spoke you were in progress on the following goal: "${goal.description}". Have you completed it?`, [
+  convo.addQuestion(`Hi! Last time we spoke you were in progress on the following goal: \`${goal.name}\`. Have you completed it?`, [
     {
       pattern: bot.utterances.yes,
       callback: (message, response) => {
@@ -59,24 +60,43 @@ export const addMessageAskMoreTime = (convo, bot, goal, goals) => {
   'weeklyUnleash_askMoreTime')
 }
 
-export const addMessageAskChooseGoal = (convo, bot) => {
-  convo.addQuestion(`You have some unachieved goals - would you like to choose an existing one for next week?`, [
-    {
-      pattern: bot.utterances.yes,
-      callback: (message, response) => { convo.gotoThread('startUnleash_presentGoals') },
+export const addMessageAskChooseGoal = (convo, bot, goals) => {
+  const dropdownOptions = goalsToOptions(goals)
+  convo.addMessage({
+      text: 'You have some unachieved goals, you can choose one of them or create a new one.',
+      response_type: 'in_channel',
+      attachments: [
+        {
+          'fallback': 'Select or create new goal',
+          'color': '#3AA3E3',
+          'attachment_type': 'default',
+          'callback_id': 'select_or_create_goal',
+          'actions': [
+            {
+              'name': 'goals_list',
+              'text': 'Select existing goal',
+              'type': 'select',
+              'options': dropdownOptions,
+            },
+            {
+              'name': 'create_new',
+              'text': 'Create Goal',
+              "style": "primary",
+              'value': 1,
+              'type': 'button',
+            },
+            {
+              'name': 'no',
+              'text': 'Not today ...',
+              'value': 0,
+              'type': 'button',
+            }
+          ]
+        }
+      ]
     },
-    {
-      pattern: bot.utterances.no,
-      callback: (message, response) => { convo.gotoThread('weeklyUnleash_askMaybeCreateGoal') },
-    },
-    {
-      default: true,
-      callback: (message, response) => {
-        convo.repeat()
-      },
-    }
-  ], {},
-  'weeklyUnleash_askChooseGoal')
+    'weeklyUnleash_askChooseGoal'
+  )
 }
 
 export const addMessageAskMaybeCreateGoal = (convo, bot) => {

@@ -1,12 +1,7 @@
 import * as dateUtil from '../../../util/date'
 import { goalsToOptions } from '../../../util/formatter'
 import { listUnachievedAndIdleGoals, getCurrentGoal } from '../../api/paths'
-import {
-  addMessageAskCreateGoal,
-  addMessageAskName,
-  addMessageAskDescription,
-  addMessageGoalCreated
-} from './createUnleashGoal'
+import { addMessageAskCreateGoal, addMessageCreateGoalByCommand } from './createUnleashGoal'
 import {
   addMessageAskGoalCompletion,
   addMessageAskMoreTime,
@@ -14,23 +9,23 @@ import {
   addMessageAskMaybeCreateGoal,
 } from './weeklyUnleash'
 
-export const startUnleashConvo = async function(bot, response, convo) {
+export const startUnleashConvo = async (bot, response, convo) => {
   const userId = response.user
   const goals = await listUnachievedAndIdleGoals(userId)
   const goal = await getCurrentGoal(userId)
 
   addMessagePresentGoals(convo, response, goals)
   addMessageBye(convo)
-  addMessageAskCreateGoal(convo, bot)
-  addMessageAskName(convo, response, goal)
-  addMessageAskDescription(convo, bot, response)
-  addMessageGoalCreated(convo)
-  addMessageAskChooseGoal(convo, bot)
+  addMessageAskCreateGoal(convo)
+  addMessageCreateGoalByCommand(convo)
+  addMessageAskChooseGoal(convo, bot, goals)
   addMessageAskMaybeCreateGoal(convo, bot)
+
   if (goal) {
     addMessageAskGoalCompletion(convo, bot, goal)
     addMessageAskMoreTime(convo, bot, goal, goals)
   }
+
   convo.activate()
 
   if (goal) {
@@ -42,7 +37,7 @@ export const startUnleashConvo = async function(bot, response, convo) {
   }
 }
 
-const addMessagePresentGoals = async function(convo, response, goals) {
+const addMessagePresentGoals = (convo, response, goals) => {
   const dropdownOptions = goalsToOptions(goals)
   convo.addMessage({
       text: 'Alright! Lets select goal you\'d like to focus on this week:',
@@ -52,7 +47,7 @@ const addMessagePresentGoals = async function(convo, response, goals) {
           'fallback': 'Select goal',
           'color': '#3AA3E3',
           'attachment_type': 'default',
-          'callback_id': 'select_existing_goal',
+          'callback_id': 'select_current_goal',
           'actions': [
             {
               'name': 'goals_list',
@@ -63,7 +58,7 @@ const addMessagePresentGoals = async function(convo, response, goals) {
             {
               'name': 'no',
               'text': 'Not today ...',
-              'value': 1,
+              'value': 0,
               'type': 'button',
             }
           ]
