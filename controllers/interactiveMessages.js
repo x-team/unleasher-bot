@@ -91,10 +91,9 @@ router.post('/im', async function (req, res) {
             console.log(IM_MSG_TYPE_CURRENT_GOAL, goal)
             res.status(200).send('1')
         } else if ( payload.type === IM_TYPE_INTERACTIVE_MSG && payload.callback_id === IM_MSG_TYPE_CREATE_FIRST_GOAL) {
-            console.log(payload)
             openDialog(payload.team.id, payload.trigger_id)
-            console.log(IM_MSG_TYPE_CREATE_FIRST_GOAL)
             res.status(200).send()
+            await sendResponseToMessage(payload.response_url, 'You selected `Create goal`. Thanks!')
         } else if ( payload.type === IM_TYPE_INTERACTIVE_MSG && payload.callback_id === IM_MSG_TYPE_SELECT_OR_CREATE) {
             if (payload.actions[0].type === IM_MENU_TYPE) {
                 const goal = await handleSwitchGoal(payload)
@@ -105,7 +104,7 @@ router.post('/im', async function (req, res) {
                 if (parseInt(payload.actions[0].value) === 1) {
                     openDialog(payload.team.id, payload.trigger_id)
                     res.status(200).send()
-                    await sendResponseToMessage(payload.response_url, 'Opening `Create Goal` dialog ...')
+                    await sendResponseToMessage(payload.response_url, 'You selected `Create goal`. Thanks!')
                 } else {
                     res.status(200).send({'text': MKTHX})
                     // if this selected we can say that the bot will contact anyway next week. Might be nice to show date and time.
