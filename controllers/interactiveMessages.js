@@ -36,7 +36,7 @@ router.post('/im', async function (req, res) {
             const icon = DEFAULT_GOAL_ICON
             const achieved = false
             const goal = { name, description, dueDate, level, icon, achieved }
-            await createGoal(payload.user.id, goal)
+            const createdGoal = await createGoal(payload.user.id, goal)
             res.status(200).send()
             const attachments = [
                 {
@@ -65,7 +65,7 @@ router.post('/im', async function (req, res) {
                             'name': 'in_progress',
                             'text': 'Set as current',
                             'style': 'primary',
-                            'value': 1,
+                            'value': createdGoal.id,
                             'type': 'button'
                         },
                         {
@@ -87,7 +87,9 @@ router.post('/im', async function (req, res) {
             // there should be followup in here. Should this new created goal be marked in progress ?
             // also some confirmation would be nice in here - that would have to be a separate channel message
         } else if ( payload.type === IM_TYPE_INTERACTIVE_MSG && payload.callback_id === IM_MSG_TYPE_CURRENT_GOAL) {
-            const goal = await handleSwitchGoal(payload)
+            const goalId = payload.actions[0].selected_options[0].value
+            const userId = payload.user.id
+            const goal = await switchGoal(userId, goalId)
             console.log(IM_MSG_TYPE_CURRENT_GOAL, goal)
             res.status(200).send('1')
         } else if ( payload.type === IM_TYPE_INTERACTIVE_MSG && payload.callback_id === IM_MSG_TYPE_CREATE_FIRST_GOAL) {
@@ -96,7 +98,9 @@ router.post('/im', async function (req, res) {
             await sendResponseToMessage(payload.response_url, 'You selected `Create goal`. Thanks!')
         } else if ( payload.type === IM_TYPE_INTERACTIVE_MSG && payload.callback_id === IM_MSG_TYPE_SELECT_OR_CREATE) {
             if (payload.actions[0].type === IM_MENU_TYPE) {
-                const goal = await handleSwitchGoal(payload)
+                const goalId = payload.actions[0].selected_options[0].value
+                const userId = payload.user.id
+                const goal = await switchGoal(userId, goalId)
                 console.log(IM_MSG_TYPE_SELECT_OR_CREATE, goal)
                 res.status(200).send(`Your goal \`${goal.name}\` is now set in progress. You have until ${goal.dueDate} to complete it.`)
                 // some confirmation message in here would be in place. Maybe even bringing up the whole goal card.
@@ -113,7 +117,9 @@ router.post('/im', async function (req, res) {
         } else if ( payload.type === IM_TYPE_INTERACTIVE_MSG && payload.callback_id === IM_MSG_TYPE_STATUS_UPDATE) {
             console.log(payload)
             if (payload.actions[0].type === IM_MENU_TYPE) {
-                const goal = await handleSwitchGoal(payload)
+                const goalId = payload.actions[0].selected_options[0].value
+                const userId = payload.user.id
+                const goal = await switchGoal(userId, goalId)
                 console.log(IM_MSG_TYPE_STATUS_UPDATE, goal)
                 res.status(200).send(`Your goal \`${goal.name}\` is now set in progress. You have until ${goal.dueDate} to complete it.`)
             // some confirmation message in here would be in place. Maybe even bringing up the whole goal card.
@@ -139,7 +145,10 @@ router.post('/im', async function (req, res) {
                 res.status(200).send()
                 await sendResponseToMessage(payload.response_url, 'Opening `Create Goal` dialog ...')
             } else if (payload.actions[0].name === ACTION_SET_GOAL_IN_PROGRESS) {
-                console.log(IM_MSG_TYPE_AFTER_GOAL_CREATED, payload)
+                const goalId = payload.actions[0].value
+                const userId = payload.user.id
+                const goal = await switchGoal(userId, goalId)
+                res.status(200).send(`Your goal \`${goal.name}\` is now set in progress. You have until ${goal.dueDate} to complete it.`)
             } else {
                 res.status(200).send({'text': MKTHX})
             }
@@ -148,10 +157,3 @@ router.post('/im', async function (req, res) {
 })
 
 export default router
-
-const handleSwitchGoal = async (payload) => {
-    const goalId = payload.actions[0].selected_options[0].value
-    const userId = payload.user.id
-
-    return await switchGoal(userId, goalId)
-}
