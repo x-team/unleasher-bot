@@ -4,7 +4,8 @@ import { switchGoal, createGoal, achieveCurrentGoal, postponeCurrentGoal } from 
 import { formatGoalDueDate, formatInteractiveComponent } from '../util/formatter'
 import { dateNextWeekISO } from '../util/date'
 import { openDialog } from '../handlers/api/slack/dialog'
-import { sendResponseToMessage, sendChatMessage } from '../handlers/api/slack/chat'
+import { sendResponseToMessage, sendChatMessage, sendChannelMessage } from '../handlers/api/slack/chat'
+import { getUserData } from '../handlers/api/slack/user'
 import * as interactiveComponent from '../models/interactiveComponent'
 
 const router = new express.Router()
@@ -71,11 +72,13 @@ router.post('/im', async function (req, res) {
             } else if (payload.actions[0].type === interactiveComponent.IM_BUTTON_TYPE) {
                 switch (parseInt(payload.actions[0].value)) {
                 case interactiveComponent.ACTION_GOAL_COMPLETED:
-                    const response = await achieveCurrentGoal(payload.user.id)
-                    console.log('Achieve response:', response)
-                    res.status(200).send({'text': 'TODO: Congratulate and offer options. Send notification to #unleash'})
-                    // start new convo. Congratulate finishing goal and propose actions what to do next. Either create a new goal or pick from the list or skip status update for now.
-                    // notification to channel should be sent
+                    let data = await achieveCurrentGoal(payload.user.id)
+                    res.status(200).send('Awesome! Congrats! :sparkles: :tada: :cake: \nWhenever you feel ready ping me in here to plan your next step.')
+                    data.callbackId = interactiveComponent.ATTCH_MSG_GOAL_COMPLETED
+                    data.userId = payload.user.id
+                    data.userData = await getUserData(payload.user.id, payload.team.id)
+                    const attachments = formatInteractiveComponent(data)
+                    await sendChannelMessage(process.env.unleash_channel, payload.team.id, null, JSON.stringify(attachments))
                     break
 
                 case interactiveComponent.ACTION_MORE_TIME:

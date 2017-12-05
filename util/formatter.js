@@ -23,14 +23,17 @@ const formatInteractiveComponent = (data) => {
   switch (data.callbackId) {
     case interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_CREATED:
       component = goalCreatedTemplate(data)
-      break;
+      break
     case interactiveComponent.IM_MSG_TYPE_STATUS_UPDATE:
       const pretext = `Hi! What is your progress on ${data.name} lvl.${data.level} goal ?`
       component = goalCardTemplate(data, true, pretext)
-      break;
+      break
     case interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_SWITCHED:
       component = goalCardTemplate(data, false)
-      break;
+      break
+    case interactiveComponent.ATTCH_MSG_GOAL_COMPLETED:
+      component = goalAchieved(data)
+      break
   }
 
   return component
@@ -40,6 +43,20 @@ export {
     formatGoalDueDate,
     goalsToOptions,
     formatInteractiveComponent
+}
+
+const goalAchieved = (data) => {
+  return [
+    {
+      pretext: `${data.userData.profile.real_name} has completed a goal! :sparkles:`,
+      attachment_type: "default",
+      color: 'good',
+      fallback: 'txt',
+      title: data.name || '',
+      text: data.description || '',
+      thumb_url: data.userData.profile.image_24
+    }
+  ]
 }
 
 const goalCardTemplate = (data, actions, pretext) => {
