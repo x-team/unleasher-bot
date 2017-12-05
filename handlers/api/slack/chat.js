@@ -49,8 +49,29 @@ const sendChatMessage = (user, team, text, attachments) => {
   })
 }
 
+const sendChannelMessage = (channel, team, text, attachments) => {
+  const botData = getBotData(team)
+  const slackClient = new slack(botData.config.token)
+  const data = {
+    text,
+    channel,
+    attachments,
+    as_user: true
+  }
+  return new Promise((resolve, reject) => {
+    slackClient.api('chat.postMessage', data, (err, response) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(response)
+      }
+    })
+  })
+}
+
 export {
   updateChatMessage,
   sendChatMessage,
-  sendResponseToMessage
+  sendResponseToMessage,
+  sendChannelMessage
 }
