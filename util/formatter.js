@@ -51,7 +51,7 @@ const goalAchieved = (data) => {
       pretext: `${data.userData.profile.real_name} has completed a goal! :sparkles:`,
       attachment_type: "default",
       color: 'good',
-      fallback: 'txt',
+      fallback: 'Unleash achievement',
       title: data.name || '',
       text: data.description || '',
       thumb_url: data.userData.profile.image_24
