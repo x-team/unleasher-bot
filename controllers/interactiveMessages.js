@@ -42,6 +42,9 @@ router.post('/im', async function (req, res) {
               await sendResponseToMessage(payload.response_url, 'You selected `Create goal`. Thanks!')
             } else if (payload.actions[0].name == interactiveComponent.GENERIC_NO) {
               res.status(200).send({'text': interactiveComponent.MKTHX})
+            } else if (payload.actions[0].name == interactiveComponent.CONTACT_MY_UNLEASHER) {
+              res.status(200).send('OK! Message to UNLEASHERS has been sent. Expect to hear from them shortly.')
+              await sendChannelMessage(process.env.unleashers_channel, payload.team.id, `Hi. <@${payload.user.id}> has requested unleasher.`)
             }
         } else if ( payload.type === interactiveComponent.IM_TYPE_INTERACTIVE_MSG && payload.callback_id === interactiveComponent.IM_MSG_TYPE_SELECT_OR_CREATE) {
             if (payload.actions[0].type === interactiveComponent.IM_MENU_TYPE) {

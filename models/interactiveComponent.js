@@ -18,6 +18,7 @@ const ACTION_CREATE_NEW_GOAL = 'create_new'
 const ATTCH_MSG_GOAL_COMPLETED = 'goal_completed'
 const GENERIC_NO = 'no'
 const GENERIC_YES = 'yes'
+const CONTACT_MY_UNLEASHER = 'contect_unleasher'
 
 export {
   IM_TYPE_DIALOG,
@@ -39,5 +40,6 @@ export {
   ACTION_CREATE_NEW_GOAL,
   ATTCH_MSG_GOAL_COMPLETED,
   GENERIC_NO,
-  GENERIC_YES
+  GENERIC_YES,
+  CONTACT_MY_UNLEASHER
 }
