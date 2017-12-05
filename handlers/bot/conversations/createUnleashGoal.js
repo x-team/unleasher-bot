@@ -1,3 +1,5 @@
+import { GENERIC_NO, GENERIC_YES } from '../../../models/interactiveComponent'
+
 const addMessageAskCreateGoal = (convo) => {
   convo.addMessage({
       text: 'Hi! I can see that you have no goals yet. Shal we create one?',
@@ -10,14 +12,14 @@ const addMessageAskCreateGoal = (convo) => {
           'callback_id': 'create_first_goal',
           'actions': [
             {
-              'name': 'yes',
+              'name': GENERIC_YES,
               'text': 'Create Goal',
               "style": "primary",
               'value': 1,
               'type': 'button',
             },
             {
-              'name': 'no',
+              'name': GENERIC_NO,
               'text': 'Not today ...',
               'value': 0,
               'type': 'button',

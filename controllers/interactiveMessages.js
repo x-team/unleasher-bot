@@ -36,9 +36,13 @@ router.post('/im', async function (req, res) {
             const attachments = formatInteractiveComponent(data)
             sendChatMessage(payload.user.id, payload.team.id, null, JSON.stringify(attachments))
         } else if ( payload.type === interactiveComponent.IM_TYPE_INTERACTIVE_MSG && payload.callback_id === interactiveComponent.IM_MSG_TYPE_CREATE_FIRST_GOAL) {
-            openDialog(payload.team.id, payload.trigger_id)
-            res.status(200).send()
-            await sendResponseToMessage(payload.response_url, 'You selected `Create goal`. Thanks!')
+            if (payload.actions[0].name == interactiveComponent.GENERIC_YES) {
+              openDialog(payload.team.id, payload.trigger_id)
+              res.status(200).send()
+              await sendResponseToMessage(payload.response_url, 'You selected `Create goal`. Thanks!')
+            } else if (payload.actions[0].name == interactiveComponent.GENERIC_NO) {
+              res.status(200).send({'text': interactiveComponent.MKTHX})
+            }
         } else if ( payload.type === interactiveComponent.IM_TYPE_INTERACTIVE_MSG && payload.callback_id === interactiveComponent.IM_MSG_TYPE_SELECT_OR_CREATE) {
             if (payload.actions[0].type === interactiveComponent.IM_MENU_TYPE) {
                 const goalId = payload.actions[0].selected_options[0].value
