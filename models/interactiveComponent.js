@@ -11,14 +11,17 @@ const DEFAULT_GOAL_ICON = 'home'
 const IM_MENU_TYPE = 'select'
 const IM_BUTTON_TYPE = 'button'
 const MKTHX = 'Ok, thx!'
-const ACTION_GOAL_COMPLETED = 1
-const ACTION_MORE_TIME = 0
+const ACTION_GOAL_COMPLETED = 'goal_completed'
+const ACTION_MORE_TIME = 'need_more_time'
 const ACTION_SET_GOAL_IN_PROGRESS = 'in_progress'
 const ACTION_CREATE_NEW_GOAL = 'create_new'
+const ACTION_CONTACT_MY_UNLEASHER = 'contect_unleasher'
+const ACTION_SWITCH_GOAL = 'switch_goal'
 const ATTCH_MSG_GOAL_COMPLETED = 'goal_completed'
 const GENERIC_NO = 'no'
 const GENERIC_YES = 'yes'
-const CONTACT_MY_UNLEASHER = 'contect_unleasher'
+const COMPONENT_COLOR_GREEN = 'primary'
+const COMPONENT_COLOR_RED = 'danger'
 
 export {
   IM_TYPE_DIALOG,
@@ -38,8 +41,11 @@ export {
   ACTION_MORE_TIME,
   ACTION_SET_GOAL_IN_PROGRESS,
   ACTION_CREATE_NEW_GOAL,
+  ACTION_CONTACT_MY_UNLEASHER,
+  ACTION_SWITCH_GOAL,
   ATTCH_MSG_GOAL_COMPLETED,
   GENERIC_NO,
   GENERIC_YES,
-  CONTACT_MY_UNLEASHER
+  COMPONENT_COLOR_GREEN,
+  COMPONENT_COLOR_RED
 }

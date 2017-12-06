@@ -103,23 +103,30 @@ const goalCardTemplate = (data, actions, pretext) => {
   if (actions) {
     template.actions = [
       {
-        name: "goal_done",
+        name: interactiveComponent.ACTION_GOAL_COMPLETED,
         text: "Completed",
-        style: "primary",
+        style: interactiveComponent.COMPONENT_COLOR_GREEN,
         value: 1,
-        type: "button"
+        type: interactiveComponent.IM_BUTTON_TYPE
       },
       {
-        name: "need_more_time",
+        name: interactiveComponent.ACTION_MORE_TIME,
         text: "I need more time",
         value: 0,
-        type: "button"
+        type: interactiveComponent.IM_BUTTON_TYPE
       },
       {
-        name: "goals_list",
+        name: interactiveComponent.ACTION_SWITCH_GOAL,
         text: "Switch goal here",
-        type: "select",
+        type: interactiveComponent.IM_MENU_TYPE,
         options: data.dropdownOptions,
+      },
+      {
+        name: interactiveComponent.ACTION_CONTACT_MY_UNLEASHER,
+        text: "Contact Real Unleasher",
+        style: interactiveComponent.COMPONENT_COLOR_RED,
+        value: 2,
+        type: interactiveComponent.IM_BUTTON_TYPE
       }
     ]
   }

@@ -1,4 +1,4 @@
-import { GENERIC_NO, GENERIC_YES, CONTACT_MY_UNLEASHER } from '../../../models/interactiveComponent'
+import { GENERIC_NO, GENERIC_YES, ACTION_CONTACT_MY_UNLEASHER } from '../../../models/interactiveComponent'
 
 const addMessageAskCreateGoal = (convo) => {
   convo.addMessage({
@@ -25,7 +25,7 @@ const addMessageAskCreateGoal = (convo) => {
               'type': 'button',
             },
             {
-              'name': CONTACT_MY_UNLEASHER,
+              'name': ACTION_CONTACT_MY_UNLEASHER,
               'text': 'Contact Real Unleasher',
               "style": "danger",
               'value': 2,
