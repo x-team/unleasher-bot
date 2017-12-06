@@ -47,6 +47,13 @@ export const addMessageAskChooseGoal = (convo, bot, goals) => {
               'text': 'Not today ...',
               'value': 0,
               'type': 'button',
+            },
+            {
+              'name': interactiveComponent.ACTION_CONTACT_MY_UNLEASHER,
+              'text': 'Contact Real Unleasher',
+              "style": "danger",
+              'value': 2,
+              'type': 'button',
             }
           ]
         }
