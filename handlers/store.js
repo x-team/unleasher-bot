@@ -58,7 +58,7 @@ const getTeamAppToken = (team) => {
 }
 
 const isUserInWhitelist = (userName) => {
-    return userName === 'jacek.lawniczak' || userName === 'chris.burkhardt' || userName === 'bart'
+    return userName === 'jacek.lawniczak' || userName === 'chris.burkhardt' || userName === 'bart' || userName === 'diegoferreira' || userName === 'kamil.ronewicz'
 }
 
 export {
