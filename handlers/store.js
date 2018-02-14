@@ -48,7 +48,7 @@ const getAllTokens = () => {
 }
 
 const isUserInWhitelist = (userName) => {
-    return userName === 'karolsojko'
+    return userName === 'jacek.lawniczak'
 }
 
 export {
