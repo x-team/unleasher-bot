@@ -47,6 +47,16 @@ const getAllTokens = () => {
     })
 }
 
+const getTeamAppToken = (team) => {
+    return new Promise((resolve) => {
+        const teamsTokens = firebase.database().ref(`${TOKENS}/${team}`)
+        teamsTokens.once('value', (snapshot) => {
+            const value = snapshot.val()
+            resolve(value.token)
+        })
+    })
+}
+
 const isUserInWhitelist = (userName) => {
     return userName === 'jacek.lawniczak'
 }
@@ -55,6 +65,7 @@ export {
     storeTeamToken,
     setupDevTeam,
     getAllTokens,
+    getTeamAppToken,
     isUserInWhitelist,
     init,
 }
