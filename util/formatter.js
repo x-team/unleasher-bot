@@ -54,7 +54,7 @@ const goalAchieved = (data) => {
       fallback: 'Unleash achievement',
       title: data.name || '',
       text: data.description || '',
-      thumb_url: data.userData.profile.image_24
+      thumb_url: data.userData.profile.image_512
     }
   ]
 }
