@@ -138,7 +138,7 @@ const goalCreatedTemplate = (data) => {
   return [
       {
           pretext: "Your goal has been created.",
-          text: "What shal we do next ?",
+          text: "What shall we do next ?",
           fallback: "Goal created",
           color: "#3AA3E3",
           attachment_type: "default",
