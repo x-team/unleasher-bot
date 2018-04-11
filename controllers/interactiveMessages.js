@@ -37,14 +37,14 @@ router.post('/im', async function (req, res) {
             sendChatMessage(payload.user.id, payload.team.id, null, JSON.stringify(attachments))
         } else if ( payload.type === interactiveComponent.IM_TYPE_INTERACTIVE_MSG && payload.callback_id === interactiveComponent.IM_MSG_TYPE_CREATE_FIRST_GOAL) {
             if (payload.actions[0].name == interactiveComponent.GENERIC_YES) {
-              openDialog(payload.team.id, payload.trigger_id)
-              res.status(200).send()
-              await sendResponseToMessage(payload.response_url, 'You selected `Create goal`. Thanks!')
+                openDialog(payload.team.id, payload.trigger_id)
+                res.status(200).send()
+                await sendResponseToMessage(payload.response_url, 'You selected `Create goal`. Thanks!')
             } else if (payload.actions[0].name == interactiveComponent.GENERIC_NO) {
-              res.status(200).send({'text': interactiveComponent.MKTHX})
+                res.status(200).send({'text': interactiveComponent.MKTHX})
             } else if (payload.actions[0].name == interactiveComponent.ACTION_CONTACT_MY_UNLEASHER) {
-              res.status(200).send('OK! Message to UNLEASHERS has been sent. Expect to hear from them shortly.')
-              await sendChannelMessage(process.env.unleashers_channel, payload.team.id, `Hi. <@${payload.user.id}> has requested unleasher.`)
+                res.status(200).send('OK! Message to UNLEASHERS has been sent. Expect to hear from them shortly.')
+                await sendChannelMessage(process.env.unleashers_channel, payload.team.id, `Hi. <@${payload.user.id}> has requested unleasher.`)
             }
         } else if ( payload.type === interactiveComponent.IM_TYPE_INTERACTIVE_MSG && payload.callback_id === interactiveComponent.IM_MSG_TYPE_SELECT_OR_CREATE) {
             if (payload.actions[0].type === interactiveComponent.IM_MENU_TYPE) {
@@ -78,25 +78,25 @@ router.post('/im', async function (req, res) {
                 sendChatMessage(payload.user.id, payload.team.id, null, JSON.stringify(attachments))
             } else if (payload.actions[0].type === interactiveComponent.IM_BUTTON_TYPE) {
                 switch (payload.actions[0].name) {
-                    case interactiveComponent.ACTION_GOAL_COMPLETED:
-                        let data = await achieveCurrentGoal(payload.user.id)
-                        res.status(200).send('Awesome! Congrats! :sparkles: :tada: :cake: \nWhenever you feel ready ping me in here to plan your next step.')
-                        data.callbackId = interactiveComponent.ATTCH_MSG_GOAL_COMPLETED
-                        data.userId = payload.user.id
-                        data.userData = await getUserData(payload.user.id, payload.team.id)
-                        const attachments = formatInteractiveComponent(data)
-                        await sendChannelMessage(process.env.unleash_channel, payload.team.id, null, JSON.stringify(attachments))
-                        break
+                case interactiveComponent.ACTION_GOAL_COMPLETED:
+                    let data = await achieveCurrentGoal(payload.user.id)
+                    res.status(200).send('Awesome! Congrats! :sparkles: :tada: :cake: \nWhenever you feel ready ping me in here to plan your next step.')
+                    data.callbackId = interactiveComponent.ATTCH_MSG_GOAL_COMPLETED
+                    data.userId = payload.user.id
+                    data.userData = await getUserData(payload.user.id, payload.team.id)
+                    const attachments = formatInteractiveComponent(data)
+                    await sendChannelMessage(process.env.unleash_channel, payload.team.id, null, JSON.stringify(attachments))
+                    break
 
-                    case interactiveComponent.ACTION_MORE_TIME:
-                        await postponeCurrentGoal(payload.user.id)
-                        res.status(200).send('Ok I added another week to this. I will bug you in 7 day. Stay positive!')
-                        break
+                case interactiveComponent.ACTION_MORE_TIME:
+                    await postponeCurrentGoal(payload.user.id)
+                    res.status(200).send('Ok I added another week to this. I will bug you in 7 day. Stay positive!')
+                    break
 
-                    case interactiveComponent.ACTION_CONTACT_MY_UNLEASHER:
-                        res.status(200).send('OK! Message to UNLEASHERS has been sent. Expect to hear from them shortly.')
-                        await sendChannelMessage(process.env.unleashers_channel, payload.team.id, `Hi. <@${payload.user.id}> has requested unleasher.`)
-                        break
+                case interactiveComponent.ACTION_CONTACT_MY_UNLEASHER:
+                    res.status(200).send('OK! Message to UNLEASHERS has been sent. Expect to hear from them shortly.')
+                    await sendChannelMessage(process.env.unleashers_channel, payload.team.id, `Hi. <@${payload.user.id}> has requested unleasher.`)
+                    break
                 }
             }
         } else if ( payload.type === interactiveComponent.IM_TYPE_INTERACTIVE_MSG && payload.callback_id === interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_CREATED) {
