@@ -23,16 +23,16 @@ const handleGoalCreated = async (payload) => {
     sendChatMessage(payload.user.id, payload.team.id, null, JSON.stringify(attachments))
 }
 
-// const handleSwitchGoal = async () => {
-//     const goalId = payload.actions[0].selected_options[0].value
-//     const userId = payload.user.id
-//     const goal = await switchGoal(userId, goalId)
-//     res.status(200).send('Great! You can see the details of your current goal below. Talk soon. Good luck!')
-//     let data = goal
-//     data.callbackId = interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_SWITCHED
-//     const attachments = formatInteractiveComponent(data)
-//     sendChatMessage(payload.user.id, payload.team.id, null, JSON.stringify(attachments))
-// }
+const handleSwitchGoal = async (payload) => {
+    const goalId = payload.actions[0].selected_options[0].value
+    const userId = payload.user.id
+    const goal = await switchGoal(userId, goalId)
+    //res.status(200).send('Great! You can see the details of your current goal below. Talk soon. Good luck!')
+    let data = goal
+    data.callbackId = interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_SWITCHED
+    const attachments = formatInteractiveComponent(data)
+    sendChatMessage(payload.user.id, payload.team.id, null, JSON.stringify(attachments))
+}
 
 // const handleSetGoalInProgress = async () => {
 //     const goalId = payload.actions[0].value
@@ -118,6 +118,7 @@ const handleSelectOrCreateGoalChoice = async (payload) => {
         break
 
     case IM_START_UNLEASH.actions.chooseExising:
+        handleSwitchGoal(payload)
         break
 
     case IM_START_UNLEASH.actions.contactUnleasher:

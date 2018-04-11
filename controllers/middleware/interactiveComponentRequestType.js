@@ -58,7 +58,16 @@ export default (req, res, next) => {
 
             case IC_ACTION_SELECT:
                 res.locals = { respond: true }
-                console.log('im.menu', payload)
+                switch (payload.callback_id) {
+                case IM_START_UNLEASH.callbackId:
+                    handleSelectOrCreateGoalChoice(payload)
+                    break
+
+                default:
+                    console.log('Unsupported menu callback id: ', payload.callback_id)
+                    break
+                }
+
                 break
 
             default:
