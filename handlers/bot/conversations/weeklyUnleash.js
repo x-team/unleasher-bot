@@ -1,7 +1,8 @@
 import { goalsToOptions, formatInteractiveComponent } from '../../../util/formatter'
-import * as interactiveComponent from '../../../models/interactiveComponent'
+import interactiveComponent from '../../../models/interactiveComponent'
 
 const addMessageAskGoalCompletion = (convo, bot, goal, goals) => {
+    console.log('addMessageAskGoalCompletion')
     const dropdownOptions = goalsToOptions(goals)
     // here we could check if the due date is still in the future. If so maybe button "I need more time" should just reasure that there is still time left.
     // or maybe we should change the flow on "I need more time" and in any case it's used it should as for "How much more time do you need ? "
