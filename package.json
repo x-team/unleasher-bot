@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "babel-node app.js",
-    "eslint": "./node_modules/.bin/eslint **/*.js --fix",
+    "eslint": "./node_modules/.bin/eslint controllers handlers models util views app.js --fix",
     "test": "jest"
   },
   "repository": {
