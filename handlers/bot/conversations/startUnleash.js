@@ -1,10 +1,8 @@
-import * as dateUtil from '../../../util/date'
 import { goalsToOptions } from '../../../util/formatter'
 import { listUnachievedAndIdleGoals, getCurrentGoal } from '../../api/paths'
 import { addMessageAskCreateGoal, addMessageCreateGoalByCommand } from './createUnleashGoal'
 import {
     addMessageAskGoalCompletion,
-    addMessageAskMoreTime,
     addMessageAskChooseGoal,
     addMessageAskMaybeCreateGoal,
 } from './weeklyUnleash'

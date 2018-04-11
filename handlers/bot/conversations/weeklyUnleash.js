@@ -1,5 +1,3 @@
-import { listGoals, postponeGoal } from '../../api/paths'
-import { startUnleashConvo } from './startUnleash'
 import { goalsToOptions, formatInteractiveComponent } from '../../../util/formatter'
 import * as interactiveComponent from '../../../models/interactiveComponent'
 
@@ -67,15 +65,15 @@ export const addMessageAskMaybeCreateGoal = (convo, bot) => {
     convo.addQuestion('Maybe you would like to create a new goal?', [
         {
             pattern: bot.utterances.yes,
-            callback: (message, response) => { convo.gotoThread('createUnleashGoal_askDescription') },
+            callback: () => { convo.gotoThread('createUnleashGoal_askDescription') },
         },
         {
             pattern: bot.utterances.no,
-            callback: (message, response) => { convo.gotoThread('bye') },
+            callback: () => { convo.gotoThread('bye') },
         },
         {
             default: true,
-            callback: (message, response) => {
+            callback: () => {
                 convo.repeat()
             },
         }

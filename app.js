@@ -19,7 +19,7 @@ app.listen(port, () => {
     console.log(`listening at port ${port}`)
 })
 if (process.env.NODE_ENV === 'local') {
-
+    // setup local
 } else {
     setupTeams()
 }

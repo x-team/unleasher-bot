@@ -18,7 +18,7 @@ const listGoals = (userId) => {
         json: true,
     }
 
-    const result = request(options).catch(errors.StatusCodeError, (reason) => {
+    const result = request(options).catch(errors.StatusCodeError, () => {
         return []
     })
 
@@ -101,7 +101,7 @@ const switchGoal = async (userId, goalId) => {
     try {
         const oldGoal = await getCurrentGoal(userId)
         if (oldGoal) {
-            const goalSkipped = await skipGoal(userId, oldGoal)
+            await skipGoal(userId, oldGoal)
         }
         const newGoal = await getGoalById(userId, goalId)
         return await postponeGoal(userId, newGoal)
