@@ -40,6 +40,7 @@ const sendChatMessage = (user, team, text, attachments) => {
     }
     return new Promise((resolve, reject) => {
         slackClient.api('chat.postMessage', data, (err, response) => {
+            console.log('chat.postMessage', err, response)
             if (err) {
                 reject(err)
             } else {

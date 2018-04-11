@@ -18,6 +18,12 @@ const createNewBotConnection = (token) => {
     users[token.team] = getTeamUsers(token.token)
 }
 
+const createLocalBotConnection = (token) => {
+    const bot = listener.spawn({ token }).startRTM()
+    bots[process.env.local_team_id] = bot
+    users[process.env.local_team_id] = getTeamUsers(token)
+}
+
 const resumeAllConnections = (tokens) => {
     for ( const key in tokens ) {
         createNewBotConnection(tokens[key])
@@ -59,5 +65,6 @@ export {
     hiBack,
     introduceUnleash,
     weeklyStatusUpdate,
-    getBotData
+    getBotData,
+    createLocalBotConnection
 }

@@ -1,4 +1,13 @@
-import * as interactiveComponent from '../models/interactiveComponent'
+import interactiveComponent from '../models/interactiveComponent'
+
+const IM_POST_GOAL_CREATED = {
+    callbackId: 'post_goal_created',
+    actions: {
+        setInProgress: 0,
+        createNew: 1,
+        doNothing: 2,
+    }
+}
 
 const formatGoalDueDate = (date) => {
     return date.substring(0, 10)
@@ -21,7 +30,7 @@ const goalsToOptions = (goals) => {
 const formatInteractiveComponent = (data) => {
     let component = []
     switch (data.callbackId) {
-    case interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_CREATED:
+    case IM_POST_GOAL_CREATED.callbackId:
         component = goalCreatedTemplate(data)
         break
     case interactiveComponent.IM_MSG_TYPE_STATUS_UPDATE:
@@ -34,15 +43,12 @@ const formatInteractiveComponent = (data) => {
     case interactiveComponent.ATTCH_MSG_GOAL_COMPLETED:
         component = goalAchieved(data)
         break
+    default:
+        console.log('Case miss for callbackId in formatInteractiveComponent', data.callbackId, interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_CREATED)
+        break
     }
 
     return component
-}
-
-export {
-    formatGoalDueDate,
-    goalsToOptions,
-    formatInteractiveComponent
 }
 
 const goalAchieved = (data) => {
@@ -159,20 +165,20 @@ const goalCreatedTemplate = (data) => {
             ],
             actions: [
                 {
-                    name: 'in_progress',
+                    name: IM_POST_GOAL_CREATED.actions.setInProgress,
                     text: 'Set as current',
                     style: 'primary',
                     value: data.goalId,
                     type: 'button'
                 },
                 {
-                    name: 'create_new',
+                    name: IM_POST_GOAL_CREATED.actions.createNew,
                     text: 'Create another',
                     value: 2,
                     type: 'button'
                 },
                 {
-                    name: 'dismiss',
+                    name: IM_POST_GOAL_CREATED.actions.doNothing,
                     text: 'Do nothing',
                     value: 0,
                     type: 'button'
@@ -180,4 +186,11 @@ const goalCreatedTemplate = (data) => {
             ]
         }
     ]
+}
+
+export {
+    formatGoalDueDate,
+    goalsToOptions,
+    formatInteractiveComponent,
+    IM_POST_GOAL_CREATED
 }
