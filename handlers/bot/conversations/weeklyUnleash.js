@@ -1,19 +1,13 @@
 import { goalsToOptions, formatInteractiveComponent } from '../../../util/formatter'
-import interactiveComponent from '../../../models/interactiveComponent'
 
-const addMessageAskGoalCompletion = (convo, bot, goal, goals) => {
-    console.log('addMessageAskGoalCompletion')
-    const dropdownOptions = goalsToOptions(goals)
-    // here we could check if the due date is still in the future. If so maybe button "I need more time" should just reasure that there is still time left.
-    // or maybe we should change the flow on "I need more time" and in any case it's used it should as for "How much more time do you need ? "
-    const data = goal
-    data.callbackId = interactiveComponent.IM_MSG_TYPE_STATUS_UPDATE
-    data.dropdownOptions = dropdownOptions
-    convo.addMessage({
-        'attachments': formatInteractiveComponent(data)
-    },
-    'weeklyUnleash_askGoalCompletion'
-    )
+const IM_UNLEASH_STATUS_UPDATE = {
+    callbackId: 'unleash_status_update',
+    actions: {
+        goalCompleted: 0,
+        postponeGoal: 1,
+        switchGoal: 2,
+        contactUnleasher: 3,
+    }
 }
 
 const IM_START_UNLEASH = {
@@ -24,6 +18,20 @@ const IM_START_UNLEASH = {
         doNothing: 2,
         contactUnleasher: 3,
     } 
+}
+
+const addMessageAskGoalCompletion = (convo, bot, goal, goals) => {
+    const dropdownOptions = goalsToOptions(goals)
+    // here we could check if the due date is still in the future. If so maybe button "I need more time" should just reasure that there is still time left.
+    // or maybe we should change the flow on "I need more time" and in any case it's used it should as for "How much more time do you need ? "
+    const data = goal
+    data.callbackId = IM_UNLEASH_STATUS_UPDATE.callbackId
+    data.dropdownOptions = dropdownOptions
+    convo.addMessage({
+        'attachments': formatInteractiveComponent(data)
+    },
+    'weeklyUnleash_askGoalCompletion'
+    )
 }
 
 const addMessageAskChooseGoal = (convo, bot, goals) => {
@@ -97,4 +105,5 @@ export {
     addMessageAskChooseGoal,
     addMessageAskMaybeCreateGoal,
     IM_START_UNLEASH,
+    IM_UNLEASH_STATUS_UPDATE,
 }

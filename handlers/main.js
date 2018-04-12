@@ -6,8 +6,9 @@ import { sendResponseToMessage, sendChatMessage, sendChannelMessage } from '../h
 import { getUserData } from '../handlers/api/slack/user'
 import interactiveComponent from '../models/interactiveComponent'
 import { IM_CREATE_UNLEASH_GOAL } from '../handlers/bot/conversations/createUnleashGoal'
-import { IM_START_UNLEASH } from '../handlers/bot/conversations/weeklyUnleash'
-import { IM_POST_GOAL_CREATED } from '../util/formatter'
+import { IM_START_UNLEASH, IM_UNLEASH_STATUS_UPDATE } from '../handlers/bot/conversations/weeklyUnleash'
+import { IM_POST_GOAL_CREATED, IM_POST_GOAL_COMPLETED, IM_POST_GOAL_SWITCHED } from '../util/formatter'
+
 
 const handleGoalCreated = async (payload) => {
     const name = payload.submission.goal_name
@@ -29,102 +30,63 @@ const handleSwitchGoal = async (payload) => {
     const goal = await switchGoal(userId, goalId)
     //res.status(200).send('Great! You can see the details of your current goal below. Talk soon. Good luck!')
     let data = goal
-    data.callbackId = interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_SWITCHED
+    data.callbackId = IM_POST_GOAL_SWITCHED.callbackId
     const attachments = formatInteractiveComponent(data)
     sendChatMessage(payload.user.id, payload.team.id, null, JSON.stringify(attachments))
 }
 
-// const handleSetGoalInProgress = async () => {
-//     const goalId = payload.actions[0].value
-//     const userId = payload.user.id
-//     const goal = await switchGoal(userId, goalId)
-//     res.status(200).send('Great! You can see the details of your current goal below. Talk soon. Good luck!')
-//     let data = goal
-//     data.callbackId = interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_SWITCHED
-//     const attachments = formatInteractiveComponent(data)
-//     sendChatMessage(payload.user.id, payload.team.id, null, JSON.stringify(attachments))
-// }
-
-// const handleUnleashInit = async () => {
-//     if (payload.actions[0].name == interactiveComponent.GENERIC_YES) {
-//         openDialog(payload.team.id, payload.trigger_id)
-//         res.status(200).send()
-//         await sendResponseToMessage(payload.response_url, 'You selected `Create goal`. Thanks!')
-//     } else if (payload.actions[0].name == interactiveComponent.GENERIC_NO) {
-//         res.status(200).send({'text': interactiveComponent.MKTHX})
-//     } else if (payload.actions[0].name == interactiveComponent.ACTION_CONTACT_MY_UNLEASHER) {
-//         res.status(200).send('OK! Message to UNLEASHERS has been sent. Expect to hear from them shortly.')
-//         await sendChannelMessage(process.env.unleashers_channel, payload.team.id, `Hi. <@${payload.user.id}> has requested unleasher.`)
-//     }
-// }
-
-// const handleCreateGoal = async () => {
-//     if (parseInt(payload.actions[0].value) === 1) {
-//         openDialog(payload.team.id, payload.trigger_id)
-//         res.status(200).send()
-//         await sendResponseToMessage(payload.response_url, 'You selected `Create goal`. Thanks!')
-//     } else {
-//         res.status(200).send({'text': interactiveComponent.MKTHX})
-//         // if this selected we can say that the bot will contact anyway next week. Might be nice to show date and time.
-//     }
-// }
-
-// const handleGoalCompleted = async () => {
-//     let data = await achieveCurrentGoal(payload.user.id)
-//     res.status(200).send('Awesome! Congrats! :sparkles: :tada: :cake: \nWhenever you feel ready ping me in here to plan your next step.')
-//     data.callbackId = interactiveComponent.ATTCH_MSG_GOAL_COMPLETED
-//     data.userId = payload.user.id
-//     data.userData = await getUserData(payload.user.id, payload.team.id)
-//     const attachments = formatInteractiveComponent(data)
-//     await sendChannelMessage(process.env.unleash_channel, payload.team.id, null, JSON.stringify(attachments))
-// }
-
-// const handleGoalPostponed = async () => {
-//     await postponeCurrentGoal(payload.user.id)
-//     res.status(200).send('Ok I added another week to this. I will bug you in 7 day. Stay positive!')
-// }
-
-// const handleContactUnleasher = async () => {
-//     res.status(200).send('OK! Message to UNLEASHERS has been sent. Expect to hear from them shortly.')
-//     await sendChannelMessage(process.env.unleashers_channel, payload.team.id, `Hi. <@${payload.user.id}> has requested unleasher.`) 
-// }
-
-const handlePostGoalCreatedChoice = async (payload) => {
-    console.log(payload)
-    switch (parseInt(payload.actions[0].name)) {
-    case IM_POST_GOAL_CREATED.actions.createNew:
-        await openDialog(payload.team.id, payload.trigger_id)
-        await sendResponseToMessage(payload.response_url, 'Opening `Create Goal` dialog ...')
-        break
-
-    case IM_POST_GOAL_CREATED.actions.setInProgress:
-        console.log('set in progress')
-        break
-
-    case IM_POST_GOAL_CREATED.actions.doNothing:
-        console.log('do nothing')
-        break
-
-    default:
-        break
-    }
+const handleSetGoalInProgress = async (payload) => {
+    const goalId = payload.actions[0].value
+    const userId = payload.user.id
+    const goal = await switchGoal(userId, goalId)
+    //res.status(200).send('Great! You can see the details of your current goal below. Talk soon. Good luck!')
+    let data = goal
+    data.callbackId = IM_POST_GOAL_SWITCHED.callbackId
+    const attachments = formatInteractiveComponent(data)
+    sendChatMessage(payload.user.id, payload.team.id, null, JSON.stringify(attachments))
 }
 
-const handleSelectOrCreateGoalChoice = async (payload) => {
+const handleContactUnleasher = async (payload) => {
+    await sendChannelMessage(process.env.unleashers_channel, payload.team.id, `Hi. <@${payload.user.id}> has requested unleasher.`)
+}
+
+const handleGoalCompleted = async (payload) => {
+    let data = await achieveCurrentGoal(payload.user.id)
+    // res.status(200).send('Awesome! Congrats! :sparkles: :tada: :cake: \nWhenever you feel ready ping me in here to plan your next step.')
+    data.callbackId = IM_POST_GOAL_COMPLETED.callbackId
+    data.userId = payload.user.id
+    data.userData = await getUserData(payload.user.id)
+    const attachments = formatInteractiveComponent(data)
+    console.log('ATTACHMENTS:', attachments)
+    await sendChannelMessage(process.env.unleash_channel, payload.team.id, null, JSON.stringify(attachments))
+}
+
+const handleOpenCreateGoalDialog = async (payload) => {
+    await openDialog(payload.team.id, payload.trigger_id)
+    await sendResponseToMessage(payload.response_url, 'Opening `Create Goal` dialog ...')
+}
+
+const handlePostponeGoal = async (payload) => {
+    await postponeCurrentGoal(payload.user.id)
+    //res.status(200).send('Ok I added another week to this. I will bug you in 7 day. Stay positive!')
+}
+
+const handleUnleashStatusUpdateChoice = (payload) => {
     switch (parseInt(payload.actions[0].name)) {
-    case IM_START_UNLEASH.actions.createNew:
-        await openDialog(payload.team.id, payload.trigger_id)
-        await sendResponseToMessage(payload.response_url, 'Opening `Create Goal` dialog ...')
+    case IM_UNLEASH_STATUS_UPDATE.actions.goalCompleted:
+        handleGoalCompleted(payload)
         break
 
-    case IM_START_UNLEASH.actions.chooseExising:
+    case IM_UNLEASH_STATUS_UPDATE.actions.postponeGoal:
+        handlePostponeGoal(payload)
+        break
+
+    case IM_UNLEASH_STATUS_UPDATE.actions.switchGoal:
         handleSwitchGoal(payload)
         break
 
-    case IM_START_UNLEASH.actions.contactUnleasher:
-        break
-    
-    case IM_START_UNLEASH.actions.doNothing:
+    case IM_UNLEASH_STATUS_UPDATE.actions.contactUnleasher:
+        handleContactUnleasher(payload)
         break
 
     default:
@@ -133,17 +95,63 @@ const handleSelectOrCreateGoalChoice = async (payload) => {
     }
 }
 
-const handleCreateUnleashGoalChoice = async (payload) => {
+const handlePostGoalCreatedChoice = async (payload) => {
+    console.log(payload)
+    switch (parseInt(payload.actions[0].name)) {
+    case IM_POST_GOAL_CREATED.actions.createNew:
+        handleOpenCreateGoalDialog(payload)
+        break
+
+    case IM_POST_GOAL_CREATED.actions.setInProgress:
+        handleSetGoalInProgress(payload)
+        break
+
+    case IM_POST_GOAL_CREATED.actions.doNothing:
+        console.log('post goal created do nothing')
+        break
+
+    default:
+        console.log('Unsupported action name: ', payload.actions[0].name)
+        break
+    }
+}
+
+const handleSelectOrCreateGoalChoice = (payload) => {
+    switch (parseInt(payload.actions[0].name)) {
+    case IM_START_UNLEASH.actions.createNew:
+        handleOpenCreateGoalDialog(payload)
+        break
+
+    case IM_START_UNLEASH.actions.chooseExising:
+        handleSwitchGoal(payload)
+        break
+
+    case IM_START_UNLEASH.actions.contactUnleasher:
+        handleContactUnleasher(payload)
+        break
+    
+    case IM_START_UNLEASH.actions.doNothing:
+        console.log('start unleash do nothing')
+        break
+
+    default:
+        console.log('Unsupported action name: ', payload.actions[0].name)
+        break
+    }
+}
+
+const handleCreateUnleashGoalChoice = (payload) => {
     switch (parseInt(payload.actions[0].name)) {
     case IM_CREATE_UNLEASH_GOAL.actions.createGoal:
-        await openDialog(payload.team.id, payload.trigger_id)
-        await sendResponseToMessage(payload.response_url, 'Opening `Create Goal` dialog ...')
+        handleOpenCreateGoalDialog(payload)
         break
 
     case IM_CREATE_UNLEASH_GOAL.actions.contactUnleasher:
+        handleContactUnleasher(payload)
         break
 
     case IM_CREATE_UNLEASH_GOAL.actions.doNothing:
+        console.log('create unleash goal do nothing')
         break
 
     default:
@@ -157,4 +165,5 @@ export {
     handleGoalCreated,
     handleSelectOrCreateGoalChoice,
     handlePostGoalCreatedChoice,
+    handleUnleashStatusUpdateChoice,
 }

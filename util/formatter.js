@@ -1,4 +1,5 @@
 import interactiveComponent from '../models/interactiveComponent'
+import { IM_UNLEASH_STATUS_UPDATE } from '../handlers/bot/conversations/weeklyUnleash'
 
 const IM_POST_GOAL_CREATED = {
     callbackId: 'post_goal_created',
@@ -7,6 +8,14 @@ const IM_POST_GOAL_CREATED = {
         createNew: 1,
         doNothing: 2,
     }
+}
+
+const IM_POST_GOAL_SWITCHED = {
+    callbackId: 'post_goal_switched'
+}
+
+const IM_POST_GOAL_COMPLETED = {
+    callbackId: 'post_goal_completed'
 }
 
 const formatGoalDueDate = (date) => {
@@ -33,18 +42,18 @@ const formatInteractiveComponent = (data) => {
     case IM_POST_GOAL_CREATED.callbackId:
         component = goalCreatedTemplate(data)
         break
-    case interactiveComponent.IM_MSG_TYPE_STATUS_UPDATE:
+    case IM_UNLEASH_STATUS_UPDATE.callbackId:
         const pretext = `Hi! What is your progress on ${data.name} lvl.${data.level} goal ?`
         component = goalCardTemplate(data, true, pretext)
         break
-    case interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_SWITCHED:
+    case IM_POST_GOAL_SWITCHED.callbackId:
         component = goalCardTemplate(data, false)
         break
-    case interactiveComponent.ATTCH_MSG_GOAL_COMPLETED:
+    case IM_POST_GOAL_COMPLETED.callbackId:
         component = goalAchieved(data)
         break
     default:
-        console.log('Case miss for callbackId in formatInteractiveComponent', data.callbackId, interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_CREATED)
+        console.log('Case miss for callbackId in formatInteractiveComponent', data.callbackId)
         break
     }
 
@@ -109,29 +118,29 @@ const goalCardTemplate = (data, actions, pretext) => {
     if (actions) {
         template.actions = [
             {
-                name: interactiveComponent.ACTION_GOAL_COMPLETED,
+                name: IM_UNLEASH_STATUS_UPDATE.actions.goalCompleted,
                 text: 'Completed',
                 style: interactiveComponent.COMPONENT_COLOR_GREEN,
-                value: 1,
+                value: IM_UNLEASH_STATUS_UPDATE.actions.goalCompleted,
                 type: interactiveComponent.IM_BUTTON_TYPE
             },
             {
-                name: interactiveComponent.ACTION_MORE_TIME,
+                name: IM_UNLEASH_STATUS_UPDATE.actions.postponeGoal,
                 text: 'I need more time',
-                value: 0,
+                value: IM_UNLEASH_STATUS_UPDATE.actions.postponeGoal,
                 type: interactiveComponent.IM_BUTTON_TYPE
             },
             {
-                name: interactiveComponent.ACTION_SWITCH_GOAL,
+                name: IM_UNLEASH_STATUS_UPDATE.actions.switchGoal,
                 text: 'Switch goal here',
                 type: interactiveComponent.IM_MENU_TYPE,
                 options: data.dropdownOptions,
             },
             {
-                name: interactiveComponent.ACTION_CONTACT_MY_UNLEASHER,
+                name: IM_UNLEASH_STATUS_UPDATE.actions.contactUnleasher,
                 text: 'Contact Real Unleasher',
                 style: interactiveComponent.COMPONENT_COLOR_RED,
-                value: 2,
+                value: IM_UNLEASH_STATUS_UPDATE.actions.contactUnleasher,
                 type: interactiveComponent.IM_BUTTON_TYPE
             }
         ]
@@ -192,5 +201,7 @@ export {
     formatGoalDueDate,
     goalsToOptions,
     formatInteractiveComponent,
-    IM_POST_GOAL_CREATED
+    IM_POST_GOAL_CREATED,
+    IM_POST_GOAL_COMPLETED,
+    IM_POST_GOAL_SWITCHED
 }

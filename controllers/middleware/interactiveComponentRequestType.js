@@ -3,10 +3,11 @@ import {
     handleCreateUnleashGoalChoice,
     handleSelectOrCreateGoalChoice,
     handlePostGoalCreatedChoice,
+    handleUnleashStatusUpdateChoice,
 } from '../../handlers/main'
 import { IM_CREATE_UNLEASH_GOAL } from '../../handlers/bot/conversations/createUnleashGoal'
 import { DIALOG_CREATE_UNLEASH_GOAL } from '../../handlers/api/slack/dialog'
-import { IM_START_UNLEASH } from '../../handlers/bot/conversations/weeklyUnleash'
+import { IM_START_UNLEASH, IM_UNLEASH_STATUS_UPDATE } from '../../handlers/bot/conversations/weeklyUnleash'
 import { IM_POST_GOAL_CREATED } from '../../util/formatter'
 
 const IC_TYPE_DIALOG = 'dialog_submission'
@@ -48,6 +49,10 @@ export default (req, res, next) => {
                 case IM_POST_GOAL_CREATED.callbackId:
                     handlePostGoalCreatedChoice(payload)
                     break
+
+                case IM_UNLEASH_STATUS_UPDATE.callbackId:
+                    handleUnleashStatusUpdateChoice(payload)
+                    break
                 
                 default:
                     console.log('Unsupported button callback id: ', payload.callback_id)
@@ -61,6 +66,10 @@ export default (req, res, next) => {
                 switch (payload.callback_id) {
                 case IM_START_UNLEASH.callbackId:
                     handleSelectOrCreateGoalChoice(payload)
+                    break
+                
+                case IM_UNLEASH_STATUS_UPDATE.callbackId:
+                    handleUnleashStatusUpdateChoice(payload)
                     break
 
                 default:
