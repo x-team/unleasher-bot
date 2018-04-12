@@ -1,4 +1,11 @@
-import { GENERIC_NO, GENERIC_YES, ACTION_CONTACT_MY_UNLEASHER } from '../../../models/interactiveComponent'
+const IM_CREATE_UNLEASH_GOAL = {
+    callbackId: 'no_goals_message',
+    actions: {
+        createGoal: 0,
+        doNothing: 1,
+        contactUnleasher: 2,
+    } 
+}
 
 const addMessageAskCreateGoal = (convo) => {
     convo.addMessage({
@@ -9,26 +16,26 @@ const addMessageAskCreateGoal = (convo) => {
                 'fallback': 'Create goal',
                 'color': '#3AA3E3',
                 'attachment_type': 'default',
-                'callback_id': 'create_first_goal',
+                'callback_id': IM_CREATE_UNLEASH_GOAL.callbackId,
                 'actions': [
                     {
-                        'name': GENERIC_YES,
+                        'name': IM_CREATE_UNLEASH_GOAL.actions.createGoal,
                         'text': 'Create Goal',
                         'style': 'primary',
-                        'value': 1,
+                        'value': IM_CREATE_UNLEASH_GOAL.actions.createGoal,
                         'type': 'button',
                     },
                     {
-                        'name': GENERIC_NO,
+                        'name': IM_CREATE_UNLEASH_GOAL.actions.doNothing,
                         'text': 'Not today ...',
-                        'value': 0,
+                        'value': IM_CREATE_UNLEASH_GOAL.actions.doNothing,
                         'type': 'button',
                     },
                     {
-                        'name': ACTION_CONTACT_MY_UNLEASHER,
+                        'name': IM_CREATE_UNLEASH_GOAL.actions.contactUnleasher,
                         'text': 'Contact Real Unleasher',
                         'style': 'danger',
-                        'value': 2,
+                        'value': IM_CREATE_UNLEASH_GOAL.actions.contactUnleasher,
                         'type': 'button',
                     }
                 ]
@@ -39,15 +46,7 @@ const addMessageAskCreateGoal = (convo) => {
     )
 }
 
-const addMessageCreateGoalByCommand = (convo) => {
-    convo.addMessage({
-        text: 'Deprecated'
-    },
-    'createUnleashGoal_askDescription'
-    )
-}
-
 export {
     addMessageAskCreateGoal,
-    addMessageCreateGoalByCommand
+    IM_CREATE_UNLEASH_GOAL
 }

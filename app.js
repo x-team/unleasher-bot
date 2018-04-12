@@ -15,10 +15,8 @@ app.use(bodyParser.json())
 
 app.use('/api', routerControllers)
 app.use('/', routerViews)
-app.listen(port, () => {
-    console.log(`listening at port ${port}`)
-})
-console.log(`Setting up ${process.env.NODE_ENV} environment ...`)
+app.listen(port)
+
 if (process.env.NODE_ENV === 'local') {
     setupLocalEnv()
 } else {
@@ -41,8 +39,7 @@ async function setupTeams() {
 }
 
 function setupLocalEnv() {
-    botHandler.createNewBotConnection(process.env.slack_bot_token)
-    cronUtil.startWeeklyStatusUpdateJob()
+    botHandler.createLocalBotConnection(process.env.slack_bot_token)
 
     botHandler.listener.on('direct_message', (bot, message) => {
         botHandler.hiBack(bot, message)

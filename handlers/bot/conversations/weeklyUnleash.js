@@ -1,12 +1,31 @@
 import { goalsToOptions, formatInteractiveComponent } from '../../../util/formatter'
-import * as interactiveComponent from '../../../models/interactiveComponent'
 
-export const addMessageAskGoalCompletion = (convo, bot, goal, goals) => {
+const IM_UNLEASH_STATUS_UPDATE = {
+    callbackId: 'unleash_status_update',
+    actions: {
+        goalCompleted: 0,
+        postponeGoal: 1,
+        switchGoal: 2,
+        contactUnleasher: 3,
+    }
+}
+
+const IM_START_UNLEASH = {
+    callbackId: 'no_in_progress_message',
+    actions: {
+        chooseExising: 0,
+        createNew: 1,
+        doNothing: 2,
+        contactUnleasher: 3,
+    } 
+}
+
+const addMessageAskGoalCompletion = (convo, bot, goal, goals) => {
     const dropdownOptions = goalsToOptions(goals)
     // here we could check if the due date is still in the future. If so maybe button "I need more time" should just reasure that there is still time left.
     // or maybe we should change the flow on "I need more time" and in any case it's used it should as for "How much more time do you need ? "
     const data = goal
-    data.callbackId = interactiveComponent.IM_MSG_TYPE_STATUS_UPDATE
+    data.callbackId = IM_UNLEASH_STATUS_UPDATE.callbackId
     data.dropdownOptions = dropdownOptions
     convo.addMessage({
         'attachments': formatInteractiveComponent(data)
@@ -15,7 +34,7 @@ export const addMessageAskGoalCompletion = (convo, bot, goal, goals) => {
     )
 }
 
-export const addMessageAskChooseGoal = (convo, bot, goals) => {
+const addMessageAskChooseGoal = (convo, bot, goals) => {
     const dropdownOptions = goalsToOptions(goals)
     convo.addMessage({
         text: 'You have no goal in progress right now. You can choose to work on one of the existing goals or create a new one.',
@@ -25,32 +44,32 @@ export const addMessageAskChooseGoal = (convo, bot, goals) => {
                 'fallback': 'Select or create new goal',
                 'color': '#3AA3E3',
                 'attachment_type': 'default',
-                'callback_id': 'select_or_create_goal',
+                'callback_id': IM_START_UNLEASH.callbackId,
                 'actions': [
                     {
-                        'name': 'goals_list',
+                        'name': IM_START_UNLEASH.actions.chooseExising,
                         'text': 'Select existing goal',
                         'type': 'select',
                         'options': dropdownOptions,
                     },
                     {
-                        'name': 'create_new',
+                        'name': IM_START_UNLEASH.actions.createNew,
                         'text': 'Create Goal',
                         'style': 'primary',
-                        'value': 1,
+                        'value': IM_START_UNLEASH.actions.createNew,
                         'type': 'button',
                     },
                     {
-                        'name': 'no',
+                        'name': IM_START_UNLEASH.actions.doNothing,
                         'text': 'Not today ...',
-                        'value': 0,
+                        'value': IM_START_UNLEASH.actions.doNothing,
                         'type': 'button',
                     },
                     {
-                        'name': interactiveComponent.ACTION_CONTACT_MY_UNLEASHER,
+                        'name': IM_START_UNLEASH.actions.contactUnleasher,
                         'text': 'Contact Real Unleasher',
                         'style': 'danger',
-                        'value': 2,
+                        'value': IM_START_UNLEASH.actions.contactUnleasher,
                         'type': 'button',
                     }
                 ]
@@ -61,7 +80,7 @@ export const addMessageAskChooseGoal = (convo, bot, goals) => {
     )
 }
 
-export const addMessageAskMaybeCreateGoal = (convo, bot) => {
+const addMessageAskMaybeCreateGoal = (convo, bot) => {
     convo.addQuestion('Maybe you would like to create a new goal?', [
         {
             pattern: bot.utterances.yes,
@@ -79,4 +98,12 @@ export const addMessageAskMaybeCreateGoal = (convo, bot) => {
         }
     ], {},
     'weeklyUnleash_askMaybeCreateGoal')
+}
+
+export {
+    addMessageAskGoalCompletion,
+    addMessageAskChooseGoal,
+    addMessageAskMaybeCreateGoal,
+    IM_START_UNLEASH,
+    IM_UNLEASH_STATUS_UPDATE,
 }

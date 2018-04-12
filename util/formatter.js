@@ -1,4 +1,22 @@
-import * as interactiveComponent from '../models/interactiveComponent'
+import interactiveComponent from '../models/interactiveComponent'
+import { IM_UNLEASH_STATUS_UPDATE } from '../handlers/bot/conversations/weeklyUnleash'
+
+const IM_POST_GOAL_CREATED = {
+    callbackId: 'post_goal_created',
+    actions: {
+        setInProgress: 0,
+        createNew: 1,
+        doNothing: 2,
+    }
+}
+
+const IM_POST_GOAL_SWITCHED = {
+    callbackId: 'post_goal_switched'
+}
+
+const IM_POST_GOAL_COMPLETED = {
+    callbackId: 'post_goal_completed'
+}
 
 const formatGoalDueDate = (date) => {
     return date.substring(0, 10)
@@ -21,28 +39,25 @@ const goalsToOptions = (goals) => {
 const formatInteractiveComponent = (data) => {
     let component = []
     switch (data.callbackId) {
-    case interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_CREATED:
+    case IM_POST_GOAL_CREATED.callbackId:
         component = goalCreatedTemplate(data)
         break
-    case interactiveComponent.IM_MSG_TYPE_STATUS_UPDATE:
+    case IM_UNLEASH_STATUS_UPDATE.callbackId:
         const pretext = `Hi! What is your progress on ${data.name} lvl.${data.level} goal ?`
         component = goalCardTemplate(data, true, pretext)
         break
-    case interactiveComponent.IM_MSG_TYPE_AFTER_GOAL_SWITCHED:
+    case IM_POST_GOAL_SWITCHED.callbackId:
         component = goalCardTemplate(data, false)
         break
-    case interactiveComponent.ATTCH_MSG_GOAL_COMPLETED:
+    case IM_POST_GOAL_COMPLETED.callbackId:
         component = goalAchieved(data)
+        break
+    default:
+        console.log('Case miss for callbackId in formatInteractiveComponent', data.callbackId)
         break
     }
 
     return component
-}
-
-export {
-    formatGoalDueDate,
-    goalsToOptions,
-    formatInteractiveComponent
 }
 
 const goalAchieved = (data) => {
@@ -103,29 +118,29 @@ const goalCardTemplate = (data, actions, pretext) => {
     if (actions) {
         template.actions = [
             {
-                name: interactiveComponent.ACTION_GOAL_COMPLETED,
+                name: IM_UNLEASH_STATUS_UPDATE.actions.goalCompleted,
                 text: 'Completed',
                 style: interactiveComponent.COMPONENT_COLOR_GREEN,
-                value: 1,
+                value: IM_UNLEASH_STATUS_UPDATE.actions.goalCompleted,
                 type: interactiveComponent.IM_BUTTON_TYPE
             },
             {
-                name: interactiveComponent.ACTION_MORE_TIME,
+                name: IM_UNLEASH_STATUS_UPDATE.actions.postponeGoal,
                 text: 'I need more time',
-                value: 0,
+                value: IM_UNLEASH_STATUS_UPDATE.actions.postponeGoal,
                 type: interactiveComponent.IM_BUTTON_TYPE
             },
             {
-                name: interactiveComponent.ACTION_SWITCH_GOAL,
+                name: IM_UNLEASH_STATUS_UPDATE.actions.switchGoal,
                 text: 'Switch goal here',
                 type: interactiveComponent.IM_MENU_TYPE,
                 options: data.dropdownOptions,
             },
             {
-                name: interactiveComponent.ACTION_CONTACT_MY_UNLEASHER,
+                name: IM_UNLEASH_STATUS_UPDATE.actions.contactUnleasher,
                 text: 'Contact Real Unleasher',
                 style: interactiveComponent.COMPONENT_COLOR_RED,
-                value: 2,
+                value: IM_UNLEASH_STATUS_UPDATE.actions.contactUnleasher,
                 type: interactiveComponent.IM_BUTTON_TYPE
             }
         ]
@@ -159,20 +174,20 @@ const goalCreatedTemplate = (data) => {
             ],
             actions: [
                 {
-                    name: 'in_progress',
+                    name: IM_POST_GOAL_CREATED.actions.setInProgress,
                     text: 'Set as current',
                     style: 'primary',
                     value: data.goalId,
                     type: 'button'
                 },
                 {
-                    name: 'create_new',
+                    name: IM_POST_GOAL_CREATED.actions.createNew,
                     text: 'Create another',
                     value: 2,
                     type: 'button'
                 },
                 {
-                    name: 'dismiss',
+                    name: IM_POST_GOAL_CREATED.actions.doNothing,
                     text: 'Do nothing',
                     value: 0,
                     type: 'button'
@@ -180,4 +195,13 @@ const goalCreatedTemplate = (data) => {
             ]
         }
     ]
+}
+
+export {
+    formatGoalDueDate,
+    goalsToOptions,
+    formatInteractiveComponent,
+    IM_POST_GOAL_CREATED,
+    IM_POST_GOAL_COMPLETED,
+    IM_POST_GOAL_SWITCHED
 }

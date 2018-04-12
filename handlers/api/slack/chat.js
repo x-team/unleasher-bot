@@ -40,6 +40,7 @@ const sendChatMessage = (user, team, text, attachments) => {
     }
     return new Promise((resolve, reject) => {
         slackClient.api('chat.postMessage', data, (err, response) => {
+            console.log('chat.postMessage', err, response)
             if (err) {
                 reject(err)
             } else {
@@ -51,6 +52,7 @@ const sendChatMessage = (user, team, text, attachments) => {
 
 const sendChannelMessage = (channel, team, text, attachments) => {
     const botData = getBotData(team)
+    console.log('send channel message ', botData.config.token)
     const slackClient = new slack(botData.config.token)
     const data = {
         text,
@@ -60,6 +62,7 @@ const sendChannelMessage = (channel, team, text, attachments) => {
     }
     return new Promise((resolve, reject) => {
         slackClient.api('chat.postMessage', data, (err, response) => {
+            console.log('chat.postMessage', err, response)
             if (err) {
                 reject(err)
             } else {

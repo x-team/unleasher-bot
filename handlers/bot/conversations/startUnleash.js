@@ -1,6 +1,6 @@
 import { goalsToOptions } from '../../../util/formatter'
 import { listUnachievedAndIdleGoals, getCurrentGoal } from '../../api/paths'
-import { addMessageAskCreateGoal, addMessageCreateGoalByCommand } from './createUnleashGoal'
+import { addMessageAskCreateGoal } from './createUnleashGoal'
 import {
     addMessageAskGoalCompletion,
     addMessageAskChooseGoal,
@@ -15,7 +15,6 @@ export const startUnleashConvo = async (bot, response, convo) => {
     addMessagePresentGoals(convo, response, goals)
     addMessageBye(convo)
     addMessageAskCreateGoal(convo)
-    addMessageCreateGoalByCommand(convo)
     addMessageAskChooseGoal(convo, bot, goals)
     addMessageAskMaybeCreateGoal(convo, bot)
 

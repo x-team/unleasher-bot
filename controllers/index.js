@@ -1,14 +1,12 @@
 import express from 'express'
 import authController from './auth'
-import wakeController from './wake'
-import interactiveMessagesController from './interactiveMessages'
-import commandsController from './commands'
+import interactiveComponentController from './interactiveComponent'
+import commandController from './command'
 
 const router = new express.Router()
 
 router.use(authController)
-router.use(wakeController)
-router.use(interactiveMessagesController)
-router.use(commandsController)
+router.use(interactiveComponentController)
+router.use(commandController)
 
 export default router
