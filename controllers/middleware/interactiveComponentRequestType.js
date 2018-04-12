@@ -44,15 +44,15 @@ export default async (req, res, next) => {
                     break
 
                 case IM_START_UNLEASH.callbackId:
-                    res.locals.message = handleSelectOrCreateGoalChoice(payload)
+                    res.locals.message = await handleSelectOrCreateGoalChoice(payload)
                     break
 
                 case IM_POST_GOAL_CREATED.callbackId:
-                    res.locals.message = handlePostGoalCreatedChoice(payload)
+                    res.locals.message = await handlePostGoalCreatedChoice(payload)
                     break
 
                 case IM_UNLEASH_STATUS_UPDATE.callbackId:
-                    res.locals.message = handleUnleashStatusUpdateChoice(payload)
+                    res.locals.message = await handleUnleashStatusUpdateChoice(payload)
                     break
                 
                 default:
@@ -66,82 +66,31 @@ export default async (req, res, next) => {
                 res.locals = { respond: true }
                 switch (payload.callback_id) {
                 case IM_START_UNLEASH.callbackId:
-                    handleSelectOrCreateGoalChoice(payload)
+                    res.locals.message = await handleSelectOrCreateGoalChoice(payload)
                     break
                 
                 case IM_UNLEASH_STATUS_UPDATE.callbackId:
-                    handleUnleashStatusUpdateChoice(payload)
+                    res.locals.message = await handleUnleashStatusUpdateChoice(payload)
                     break
 
                 default:
-                    console.log('Unsupported menu callback id: ', payload.callback_id)
+                    res.locals.message = `Unsupported menu callbackId: ${payload.callback_id} - please contact admin.`
                     break
                 }
 
                 break
 
             default:
-                console.log('Unsupported message actions type: ', payload.actions[0].type)
+                res.locals.message = `Unsupported message actions type: ${payload.actions[0].type} - please contact admin.`
                 break
             }
 
             break
             
         default:
-            console.log('Unsupported payload type:', payload)
+            res.locals.message = `Unsupported payload type: ${payload} - please contact admin.`
             break
         }
     }
     next()
 }
-
-
-// if ([interactiveComponentModel.IM_MSG_TYPE_CREATE_FIRST_GOAL,
-//     interactiveComponentModel.IM_MSG_TYPE_STATUS_UPDATE,
-//     interactiveComponentModel.IM_MSG_TYPE_SELECT_OR_CREATE,
-//     interactiveComponentModel.IM_MSG_TYPE_AFTER_GOAL_CREATED
-// ].includes(payload.callback_id)) {
-//     switch (payload.actions[0].name) {
-//     case interactiveComponentModel.GENERIC_YES:
-//         console.log('handleGoalCompleted()') //handleGoalCompleted()
-//         break
-
-//     case interactiveComponentModel.GENERIC_NO:
-//         console.log('handleGoalPostponed()') //handleGoalPostponed()
-//         break
-
-//     case interactiveComponentModel.ACTION_CONTACT_MY_UNLEASHER:
-//         console.log('handleContactUnleasher()') //handleContactUnleasher()
-//         break
-
-//     case interactiveComponentModel.ACTION_GOAL_COMPLETED:
-//         console.log('handleGoalCompleted()') //handleGoalCompleted()
-//         break
-
-//     case interactiveComponentModel.ACTION_MORE_TIME:
-//         console.log('handleGoalPostponed()') //handleGoalPostponed()
-//         break
-
-//     case interactiveComponentModel.ACTION_CREATE_NEW_GOAL:
-//         console.log('handleStartCreatingGoal()') //handleStartCreatingGoal()
-//         break
-
-//     case interactiveComponentModel.ACTION_SET_GOAL_IN_PROGRESS:
-//         console.log('handleSetGoalInProgress()') //handleSetGoalInProgress()
-//         break
-
-//     default:
-//         console.log('IC_BUTTON default: ', payload)
-//         break
-//     }
-// }
-
-
-
-
-// if ([interactiveComponentModel.IM_MSG_TYPE_CURRENT_GOAL,
-//     interactiveComponentModel.IM_MSG_TYPE_SELECT_OR_CREATE,
-//     interactiveComponentModel.IM_MSG_TYPE_STATUS_UPDATE
-// ].includes(payload.callback_id)) {
-//     console.log('handleSwitchGoal()') //handleSwitchGoal()
-// } 
