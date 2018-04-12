@@ -47,7 +47,10 @@ const handleSetGoalInProgress = async (payload) => {
 }
 
 const handleContactUnleasher = async (payload) => {
+    const response = 'OK! I notified Unleashers. They should contact you shortly. And I ... I will gof for a nap ... :sleeping:'
     await sendChannelMessage(process.env.unleashers_channel, payload.team.id, `Hi. <@${payload.user.id}> has requested unleasher.`)
+
+    return response
 }
 
 const handleGoalCompleted = async (payload) => {
@@ -140,24 +143,27 @@ const handleSelectOrCreateGoalChoice = (payload) => {
     }
 }
 
-const handleCreateUnleashGoalChoice = (payload) => {
+const handleCreateUnleashGoalChoice = async (payload) => {
+    let response = ''
     switch (parseInt(payload.actions[0].name)) {
     case IM_CREATE_UNLEASH_GOAL.actions.createGoal:
-        handleOpenCreateGoalDialog(payload)
+        response = await handleOpenCreateGoalDialog(payload)
         break
 
     case IM_CREATE_UNLEASH_GOAL.actions.contactUnleasher:
-        handleContactUnleasher(payload)
+        response = await handleContactUnleasher(payload)
         break
 
     case IM_CREATE_UNLEASH_GOAL.actions.doNothing:
-        console.log('create unleash goal do nothing')
+        response = 'No worries. Will ping you next week. Talk later! :rocket:'
         break
 
     default:
         console.log('Unsupported action name: ', payload.actions[0].name)
         break
     }
+
+    return response
 }
 
 export {

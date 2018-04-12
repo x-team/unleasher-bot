@@ -15,7 +15,7 @@ const IC_TYPE_MESSAGE = 'interactive_message'
 const IC_ACTION_BUTTON = 'button'
 const IC_ACTION_SELECT = 'select'
 
-export default (req, res, next) => {
+export default async (req, res, next) => {
     if (req.body.payload) {
         const payload = JSON.parse(req.body.payload)
         switch (payload.type) {
@@ -36,26 +36,27 @@ export default (req, res, next) => {
         case IC_TYPE_MESSAGE:
             switch (payload.actions[0].type) {
             case IC_ACTION_BUTTON:
-                res.locals = { respond: false }
+                res.locals = { respond: true }
                 switch (payload.callback_id) {
                 case IM_CREATE_UNLEASH_GOAL.callbackId:
-                    handleCreateUnleashGoalChoice(payload)
+                    res.locals.message = await handleCreateUnleashGoalChoice(payload)
+                    console.log('locals:', res.locals)
                     break
 
                 case IM_START_UNLEASH.callbackId:
-                    handleSelectOrCreateGoalChoice(payload)
+                    res.locals.message = handleSelectOrCreateGoalChoice(payload)
                     break
 
                 case IM_POST_GOAL_CREATED.callbackId:
-                    handlePostGoalCreatedChoice(payload)
+                    res.locals.message = handlePostGoalCreatedChoice(payload)
                     break
 
                 case IM_UNLEASH_STATUS_UPDATE.callbackId:
-                    handleUnleashStatusUpdateChoice(payload)
+                    res.locals.message = handleUnleashStatusUpdateChoice(payload)
                     break
                 
                 default:
-                    console.log('Unsupported button callback id: ', payload.callback_id)
+                    res.locals.message = `Unsupported button callbackId: ${payload.callback_id} - please contact admin.`
                     break
                 }
                 
